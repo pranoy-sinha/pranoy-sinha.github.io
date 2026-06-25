@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pranoy Sinha — Cloud & AI Solutions Architect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ink: #0d1117;
+            --ink-soft: #3a3f4b;
+            --ink-muted: #6b7280;
+            --surface: #f7f8fa;
+            --white: #ffffff;
+            --accent: #1a56db;
+            --accent-glow: #3b82f6;
+            --accent-light: #eff6ff;
+            --teal: #0d9488;
+            --teal-light: #f0fdfa;
+            --gold: #b45309;
+            --gold-light: #fffbeb;
+            --border: #e5e7eb;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--surface);
+            color: var(--ink);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(247, 248, 250, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 clamp(1.5rem, 5vw, 4rem);
+            height: 60px;
+        }
+
+        .nav-logo {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.04em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink-soft);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: calc(60px + 5vh) clamp(1.5rem, 8vw, 7rem) 5vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 55vw;
+            height: 55vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-name {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(3rem, 7vw, 6rem);
+            font-weight: 600;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 1rem;
+        }
+
+        .hero-name em {
+            font-style: italic;
+            font-weight: 300;
+            color: var(--accent);
+        }
+
+        .hero-title {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            font-weight: 400;
+            color: var(--ink-soft);
+            max-width: 680px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-title strong {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-family: 'Fraunces', serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--ink-muted);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            margin-top: 0.25rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            border-radius: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 2px 8px rgba(26, 86, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #1648c0;
+            box-shadow: 0 4px 14px rgba(26, 86, 219, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--ink-soft);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-left: 0.5rem;
+        }
+
+        .social-link {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-soft);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .social-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--ink-muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-family: var(--mono);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(6px);
+            }
+        }
+
+        /* ── SECTIONS ── */
+        section {
+            padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 8vw, 7rem);
+        }
+
+        .section-label {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 600;
+            line-height: 1.15;
+            color: var(--ink);
+            margin-bottom: 1rem;
+        }
+
+        .section-sub {
+            font-size: 1rem;
+            color: var(--ink-soft);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 3rem;
+        }
+
+        /* ── ABOUT / EXPERTISE ── */
+        #about {
+            background: var(--white);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .about-text p {
+            color: var(--ink-soft);
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+
+        .about-text p strong {
+            color: var(--ink);
+        }
+
+        .expertise-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.35rem 0.9rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .skills-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .skill-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .skill-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .skill-pct {
+            color: var(--ink-muted);
+            font-weight: 400;
+            font-family: var(--mono);
+        }
+
+        .skill-bar {
+            height: 5px;
+            background: var(--border);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .skill-fill {
+            height: 100%;
+            border-radius: 100px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+            transform-origin: left;
+            animation: fillBar 1.2s ease forwards;
+            transform: scaleX(0);
+        }
+
+        @keyframes fillBar {
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        /* ── PROJECTS ── */
+        #projects {
+            background: var(--surface);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .project-category {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.6rem;
+            line-height: 1.3;
+        }
+
+        .project-desc {
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tech-badge {
+            padding: 0.2rem 0.6rem;
+            background: var(--surface);
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-family: var(--mono);
+            font-weight: 500;
+            color: var(--ink-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* ── CERTIFICATIONS ── */
+        #certifications {
+            background: var(--white);
+        }
+
+        .certs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .cert-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem 1.4rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .cert-card:hover {
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+            transform: translateY(-2px);
+            border-color: #c7d2fe;
+        }
+
+        .cert-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .cert-icon.oci {
+            background: #fef3c7;
+        }
+
+        .cert-icon.azure {
+            background: #eff6ff;
+        }
+
+        .cert-icon.security {
+            background: #f0fdfa;
+        }
+
+        .cert-icon.python {
+            background: #fdf4ff;
+        }
+
+        .cert-body {
+            flex: 1;
+        }
+
+        .cert-issuer {
+            font-family: var(--mono);
+            font-size: 0.67rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .cert-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.35;
+            margin-bottom: 0.3rem;
+        }
+
+        .cert-date {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            font-family: var(--mono);
+        }
+
+        .cert-badge {
+            align-self: flex-start;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .cert-badge.active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .cert-badge.elite {
+            background: #fdf4ff;
+            color: #7e22ce;
+        }
+
+        .next-cert {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--gold-light);
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .next-cert span {
+            font-weight: 400;
+            color: #92400e;
+        }
+
+        /* ── STACK ── */
+        #stack {
+            background: var(--ink);
+            color: white;
+        }
+
+        #stack .section-label {
+            color: #60a5fa;
+        }
+
+        #stack .section-title {
+            color: white;
+        }
+
+        #stack .section-sub {
+            color: #9ca3af;
+        }
+
+        .stack-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stack-col h4 {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .stack-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stack-item {
+            font-size: 0.875rem;
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stack-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #3b82f6;
+            flex-shrink: 0;
+        }
+
+        /* ── CONTACT ── */
+        #contact {
+            background: var(--surface);
+            text-align: center;
+        }
+
+        #contact .section-sub {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(26, 86, 219, 0.1);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--ink);
+            color: #6b7280;
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+            font-family: var(--mono);
+        }
+
+        footer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .stack-cols {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stack-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── SCROLL REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <span class="nav-logo">pranoy.sinha</span>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#certifications">Certifications</a></li>
+            <li><a href="#stack">Stack</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <p class="hero-eyebrow">Cloud &amp; AI Solutions Architect · Kolkata, India</p>
+        <h1 class="hero-name">Pranoy<br /><em>Sinha</em></h1>
+        <p class="hero-title">
+            <strong>18+ years</strong> building production-grade cloud infrastructure, Industrial IoT platforms, and
+            applied AI solutions. Currently leading project delivery and cloud architecture at <strong>EBIW Info
+                Analytics</strong> — architecting systems that move fast and stay resilient.
+        </p>
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">18+</span>
+                <span class="stat-label">Years Experience</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">5+</span>
+                <span class="stat-label">Cloud Certifications</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">3</span>
+                <span class="stat-label">Cloud Platforms</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Commits to Production</span>
+            </div>
+        </div>
+        <div class="hero-cta">
+            <a href="mailto:pranoy.sinha@gmail.com" class="btn btn-primary">Get in touch</a>
+            <a href="#projects" class="btn btn-ghost">See my work ↓</a>
+            <div class="social-links">
+                <a href="https://linkedin.com/in/pranoy-sinha" target="_blank" rel="noopener" class="social-link"
+                    title="LinkedIn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                        <circle cx="4" cy="4" r="2" />
+                    </svg>
+                </a>
+                <a href="https://github.com/pranoy-sinha" target="_blank" rel="noopener" class="social-link"
+                    title="GitHub">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>scroll</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 2v8M2 7l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="about-grid">
+            <div class="about-text reveal">
+                <p class="section-label">About Me</p>
+                <h2 class="section-title">Architect by craft,<br />builder by instinct.</h2>
+                <p>I bridge the gap between complex cloud infrastructure and real-world business outcomes. As
+                    <strong>Project Delivery Lead &amp; Cloud Architect</strong> at EBIW Info Analytics, I own
+                    end-to-end delivery — from architecture decisions to CI/CD pipelines to production stability.</p>
+                <p>My work spans <strong>Industrial IoT telemetry platforms</strong>, <strong>multi-cloud
+                        migrations</strong>, <strong>NL-to-SQL AI systems</strong>, and <strong>full-stack product
+                        engineering</strong>. I work closest with AWS, OCI, and Azure — and I build things that run
+                    quietly at 3 AM.</p>
+                <p>Targeting senior <strong>remote roles with UK &amp; European companies</strong> where I can apply
+                    cloud-native expertise and AI integration at scale.</p>
+                <div class="expertise-tags">
+                    <span class="tag">Cloud Architecture</span>
+                    <span class="tag">Industrial IoT</span>
+                    <span class="tag">Applied AI / LLMs</span>
+                    <span class="tag">FastAPI</span>
+                    <span class="tag">React</span>
+                    <span class="tag">PostgreSQL</span>
+                    <span class="tag">Terraform</span>
+                    <span class="tag">Docker / Kubernetes</span>
+                    <span class="tag">Oracle 23ai</span>
+                    <span class="tag">Spring Boot</span>
+                    <span class="tag">MCP Servers</span>
+                    <span class="tag">CI/CD</span>
+                </div>
+            </div>
+            <div class="skills-panel reveal" style="transition-delay:0.15s">
+                <div class="skill-row">
+                    <div class="skill-meta"><span>Cloud Infrastructure (AWS · OCI · Azure)</span><span
+                            class="skill-pct">95%</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:95%"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>Python / FastAPI / Flask</span><span class="skill-pct">90%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:90%;animation-delay:0.1s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>React / Next.js / Node.js</span><span class="skill-pct">85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:85%;animation-delay:0.2s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>PostgreSQL / Oracle DB / TimescaleDB</span><span
+                            class="skill-pct">90%</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:90%;animation-delay:0.3s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>Docker / Kubernetes / Terraform</span><span
+                            class="skill-pct">85%</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:85%;animation-delay:0.4s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>AI / LLM Integration (OpenAI · Claude API)</span><span
+                            class="skill-pct">82%</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:82%;animation-delay:0.5s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>Spring Boot / Java</span><span class="skill-pct">78%</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:78%;animation-delay:0.6s"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-meta"><span>MQTT / Kafka / IoT Protocols</span><span class="skill-pct">80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width:80%;animation-delay:0.7s"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+        <p class="section-label reveal">Selected Work</p>
+        <h2 class="section-title reveal">Projects that ship.</h2>
+        <p class="section-sub reveal">Production systems and POCs spanning cloud, IoT, AI, and full-stack engineering.
+        </p>
+        <div class="projects-grid">
+
+            <div class="project-card reveal">
+                <p class="project-category">AI · Oracle · OCI</p>
+                <h3 class="project-title">Transpoc AI Data Explorer</h3>
+                <p class="project-desc">NL-to-SQL AI platform using Oracle APEX, OCI GenAI, and OpenAI GPT-4o-mini.
+                    Built a PL/SQL wrapper over DBMS_CLOUD_AI with regex sanitisation, full POC documentation, and a
+                    beginner implementation guide. Includes security incident remediation for unauthorized ADB access.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-badge">Oracle 23ai</span>
+                    <span class="tech-badge">OCI GenAI</span>
+                    <span class="tech-badge">APEX</span>
+                    <span class="tech-badge">PL/SQL</span>
+                    <span class="tech-badge">OpenAI GPT-4o-mini</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.05s">
+                <p class="project-category">IoT · AWS · Kafka</p>
+                <h3 class="project-title">IIoT Telemetry Platform</h3>
+                <p class="project-desc">Full Industrial IoT stack: PostgreSQL 17 HA cluster with Patroni + etcd +
+                    HAProxy, pgBackRest S3 backups with Glacier tiering, Apache Airflow + PySpark analytics pipeline.
+                    Sensor data from DEMOHW0-1 and DEMOHW0-2 flows into hourly IoT aggregations via MQTT and Kafka.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">PostgreSQL 17</span>
+                    <span class="tech-badge">Patroni</span>
+                    <span class="tech-badge">Kafka</span>
+                    <span class="tech-badge">MQTT</span>
+                    <span class="tech-badge">Airflow</span>
+                    <span class="tech-badge">PySpark</span>
+                    <span class="tech-badge">AWS EC2</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.1s">
+                <p class="project-category">Full Stack · AI · MCP</p>
+                <h3 class="project-title">RetailBot POC</h3>
+                <p class="project-desc">FastAPI + MCP Server + React chatbot with OpenAI GPT-4o-mini over a PostgreSQL
+                    retail database on EC2. Implemented an enterprise-grade ID-based lazy loading pattern to prevent
+                    customer PII from reaching OpenAI. GitHub Actions CI/CD pipeline to EC2.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">FastAPI</span>
+                    <span class="tech-badge">MCP</span>
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">PostgreSQL</span>
+                    <span class="tech-badge">GPT-4o-mini</span>
+                    <span class="tech-badge">AWS EC2</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.15s">
+                <p class="project-category">Next.js · FastAPI · DevOps</p>
+                <h3 class="project-title">CareJourney Multi-Env Deployment</h3>
+                <p class="project-desc">Multi-environment (Dev / QA / Production) VPS deployment of a Next.js frontend
+                    and FastAPI backend. Solved Node.js version conflicts (v18 vs v22 via nvm), Nginx routing conflicts
+                    between internal /api/auth routes and FastAPI /api/v1, JWT secret alignment, and Set-Cookie header
+                    stripping.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">Next.js</span>
+                    <span class="tech-badge">FastAPI</span>
+                    <span class="tech-badge">PM2</span>
+                    <span class="tech-badge">Nginx</span>
+                    <span class="tech-badge">GitHub Actions</span>
+                    <span class="tech-badge">JWT</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.2s">
+                <p class="project-category">IoT · Docker · AWS ECR</p>
+                <h3 class="project-title">IoT POC — Docker / Kubernetes on EC2</h3>
+                <p class="project-desc">Containerised IoT stack on EC2 using Docker Compose, GitHub Actions CI/CD, and
+                    AWS ECR. Managed IAM policies, ECR push/pull configuration, and docker-compose migration from local
+                    build references to ECR image references. Phased toward AWS IoT Core and MSK.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">Docker</span>
+                    <span class="tech-badge">AWS ECR</span>
+                    <span class="tech-badge">EC2</span>
+                    <span class="tech-badge">GitHub Actions</span>
+                    <span class="tech-badge">MQTT</span>
+                    <span class="tech-badge">DynamoDB</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.25s">
+                <p class="project-category">Spring Boot · Java · REST</p>
+                <h3 class="project-title">healthApi &amp; simpleShop REST APIs</h3>
+                <p class="project-desc">Spring Boot 3.x REST APIs with Spring Security 6, JPA/Hibernate, Lombok, JWT
+                    authentication, pagination, and a generic ReturnSet&lt;T&gt; response wrapper. simpleShop adds order
+                    management, Jackson serialisation fixes, and a GlobalExceptionHandler for production-safe error
+                    handling.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">Spring Boot 3.x</span>
+                    <span class="tech-badge">Spring Security 6</span>
+                    <span class="tech-badge">JWT</span>
+                    <span class="tech-badge">JPA/Hibernate</span>
+                    <span class="tech-badge">Lombok</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.3s">
+                <p class="project-category">Infrastructure · Terraform · AWS</p>
+                <h3 class="project-title">AWS Transit Gateway Inter-Region Peering</h3>
+                <p class="project-desc">Terraform-managed inter-region peering between Mumbai (ap-south-1) and Hyderabad
+                    (ap-south-2), including VPC endpoints for SSM Session Manager on private subnets. Modular
+                    architecture pattern reusable across AWS and Azure equivalents.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">Terraform</span>
+                    <span class="tech-badge">AWS Transit Gateway</span>
+                    <span class="tech-badge">VPC</span>
+                    <span class="tech-badge">SSM</span>
+                    <span class="tech-badge">ap-south-1</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="transition-delay:0.35s">
+                <p class="project-category">PostgreSQL · DevOps · Migration</p>
+                <h3 class="project-title">78GB PostgreSQL Logical Replication Migration</h3>
+                <p class="project-desc">Zero-downtime migration of rsb_proddb (78GB+) from AWS EC2 to Hostinger VPS
+                    using logical replication. Resolved OID mismatches, max_replication_slots exhaustion, partition
+                    table replica identity issues, and pg_hba.conf gaps. Followed by a nightly pg_dump + rsync backup
+                    pipeline with SMTP alerts.</p>
+                <div class="project-tech">
+                    <span class="tech-badge">PostgreSQL</span>
+                    <span class="tech-badge">Logical Replication</span>
+                    <span class="tech-badge">pg_dump</span>
+                    <span class="tech-badge">rsync</span>
+                    <span class="tech-badge">Shell Scripts</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications">
+        <p class="section-label reveal">Credentials</p>
+        <h2 class="section-title reveal">Certifications &amp; Licences</h2>
+        <p class="section-sub reveal">Industry-recognised credentials across OCI, Azure, AI security, and software
+            engineering.</p>
+        <div class="certs-grid">
+
+            <a href="#" class="cert-card reveal">
+                <div class="cert-icon oci">☁️</div>
+                <div class="cert-body">
+                    <p class="cert-issuer">Oracle Cloud Infrastructure</p>
+                    <p class="cert-name">OCI Multicloud Architect Professional</p>
+                    <p class="cert-date">Oracle · 2024</p>
+                </div>
+                <span class="cert-badge active">Active</span>
+            </a>
+
+            <a href="#" class="cert-card reveal" style="transition-delay:0.05s">
+                <div class="cert-icon oci">☁️</div>
+                <div class="cert-body">
+                    <p class="cert-issuer">Oracle Cloud Infrastructure</p>
+                    <p class="cert-name">OCI Architect Associate</p>
+                    <p class="cert-date">Oracle · 2024</p>
+                </div>
+                <span class="cert-badge active">Active</span>
+            </a>
+
+            <a href="#" class="cert-card reveal" style="transition-delay:0.1s">
+                <div class="cert-icon azure">⚡</div>
+                <div class="cert-body">
+                    <p class="cert-issuer">Microsoft Azure</p>
+                    <p class="cert-name">Azure Administrator Associate (AZ-104)</p>
+                    <p class="cert-date">Microsoft · 2024</p>
+                </div>
+                <span class="cert-badge active">Active</span>
+            </a>
+
+            <a href="#" class="cert-card reveal" style="transition-delay:0.15s">
+                <div class="cert-icon security">🔐</div>
+                <div class="cert-body">
+                    <p class="cert-issuer">Securiti</p>
+                    <p class="cert-name">AI Security &amp; Governance</p>
+                    <p class="cert-date">Securiti · 2024</p>
+                </div>
+                <span class="cert-badge active">Active</span>
+            </a>
+
+            <a href="#" class="cert-card reveal" style="transition-delay:0.2s">
+                <div class="cert-icon python">🐍</div>
+                <div class="cert-body">
+                    <p class="cert-issuer">NPTEL · IIT</p>
+                    <p class="cert-name">Python Programming</p>
+                    <p class="cert-date">NPTEL · Elite + Silver</p>
+                </div>
+                <span class="cert-badge elite">Elite + Silver</span>
+            </a>
+
+        </div>
+        <div class="next-cert reveal" style="margin-top:2rem">
+            <span style="font-size:1.2rem">🎯</span>
+            <div>Next in pipeline: <strong>Azure AI Engineer Associate (AI-102)</strong> &nbsp;<span>— currently
+                    studying</span></div>
+        </div>
+    </section>
+
+    <!-- TECH STACK -->
+    <section id="stack">
+        <p class="section-label reveal">Tech Stack</p>
+        <h2 class="section-title reveal">What I build with.</h2>
+        <p class="section-sub reveal">The full toolkit — from infrastructure provisioning to AI-powered APIs to frontend
+            delivery.</p>
+        <div class="stack-cols">
+            <div class="stack-col reveal">
+                <h4>Cloud Platforms</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>AWS (ap-south-1, EC2, ECR, IoT Core, S3,
+                        DynamoDB)</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Oracle Cloud Infrastructure (OCI)</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Microsoft Azure (AZ-104)</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Google Cloud Platform (GCS)</span>
+                </div>
+            </div>
+            <div class="stack-col reveal" style="transition-delay:0.05s">
+                <h4>Backend / APIs</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>Python · FastAPI · Flask</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Spring Boot 3.x · Spring Security 6</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Node.js · Express</span>
+                    <span class="stack-item"><span class="stack-dot"></span>MCP Servers · REST · GraphQL</span>
+                </div>
+            </div>
+            <div class="stack-col reveal" style="transition-delay:0.1s">
+                <h4>Frontend</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>React.js · Next.js</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Vite · TypeScript</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Tailwind CSS</span>
+                    <span class="stack-item"><span class="stack-dot"></span>PM2 · Nginx</span>
+                </div>
+            </div>
+            <div class="stack-col reveal" style="transition-delay:0.15s">
+                <h4>Databases</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>PostgreSQL 17 · TimescaleDB</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Oracle 23ai / 26ai (Vector DB)</span>
+                    <span class="stack-item"><span class="stack-dot"></span>MongoDB · DynamoDB</span>
+                    <span class="stack-item"><span class="stack-dot"></span>pgBackRest · Logical Replication</span>
+                </div>
+            </div>
+            <div class="stack-col reveal" style="transition-delay:0.2s">
+                <h4>DevOps / IaC</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>Terraform · Docker · Kubernetes</span>
+                    <span class="stack-item"><span class="stack-dot"></span>GitHub Actions · CI/CD</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Patroni · etcd · HAProxy</span>
+                    <span class="stack-item"><span class="stack-dot"></span>AWS ECR · Docker Compose</span>
+                </div>
+            </div>
+            <div class="stack-col reveal" style="transition-delay:0.25s">
+                <h4>AI / Data</h4>
+                <div class="stack-items">
+                    <span class="stack-item"><span class="stack-dot"></span>OpenAI GPT-4o-mini · Claude API</span>
+                    <span class="stack-item"><span class="stack-dot"></span>OCI GenAI · DBMS_CLOUD_AI</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Apache Airflow · PySpark</span>
+                    <span class="stack-item"><span class="stack-dot"></span>MQTT · Kafka · MSK</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <p class="section-label reveal">Get in touch</p>
+        <h2 class="section-title reveal">Open to senior remote roles<br />across UK &amp; Europe.</h2>
+        <p class="section-sub reveal">Cloud architecture, AI integration, IoT platforms, or full-stack delivery — let's
+            talk about what you're building.</p>
+        <div class="contact-grid reveal">
+            <a href="mailto:pranoy.sinha@gmail.com" class="contact-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7" />
+                </svg>
+                pranoy.sinha@gmail.com
+            </a>
+            <a href="https://www.linkedin.com/in/software-developer-india/" target="_blank" rel="noopener"
+                class="contact-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                    <circle cx="4" cy="4" r="2" />
+                </svg>
+                LinkedIn Profile
+            </a>
+            <a href="https://github.com/pranoy-ebiw" target="_blank" rel="noopener" class="contact-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" />
+                </svg>
+                GitHub Profile
+            </a>
+            <span class="contact-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                    <circle cx="12" cy="9" r="2.5" />
+                </svg>
+                Kolkata, India (Remote Ready)
+            </span>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a
+                href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p>
+    </footer>
+
+    <script>
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => observer.observe(el));
+
+        // Skill bars trigger on scroll
+        const skillSection = document.querySelector('#about');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    document.querySelectorAll('.skill-fill').forEach(bar => {
+                        bar.style.animation = 'none';
+                        void bar.offsetWidth;
+                        bar.style.animation = '';
+                    });
+                    skillObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+        if (skillSection) skillObserver.observe(skillSection);
+    </script>
+</body>
+
+</html>
