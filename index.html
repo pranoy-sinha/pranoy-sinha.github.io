@@ -1,118 +1,361 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>Pranoy Sinha | Certifications</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranoy Sinha | Principal Data Infrastructure & AI Architect</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for sleek icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-  
-  <style>
-    body {
-      font-family: Arial;
-      margin: 40px;
-      background: #f9f9f9;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F19;
+        }
 
-    h1, h3 {
-      color: #333;
-    }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-    .card {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1 0%, #3B82F6 50%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    .cert-img {
-      width: 200px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-
-    .cert-img:hover {
-      transform: scale(1.05);
-    }
-
-    /* Lightbox Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.9);
-    }
-
-    .modal-content {
-      display: block;
-      margin: auto;
-      max-width: 80%;
-      max-height: 80%;
-    }
-
-    .close {
-      position: absolute;
-      top: 30px;
-      right: 40px;
-      color: #fff;
-      font-size: 35px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-  </style>
+        .card-glow:hover {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+    </style>
 </head>
 
-<body>
+<body class="text-gray-300 antialiased selection:bg-indigo-500 selection:text-white">
 
-<h1>Pranoy Sinha</h1>
-<h3>Certifications & Licenses</h3>
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#0B0F19]/80 border-b border-gray-800/60 transition-all">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <span class="code-font text-indigo-400 font-bold text-lg">&lt;P_SINHA /&gt;</span>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+                <a href="#about" class="hover:text-indigo-400 transition-colors">About</a>
+                <a href="#experience" class="hover:text-indigo-400 transition-colors">Expertise</a>
+                <a href="#projects" class="hover:text-indigo-400 transition-colors">Key Projects</a>
+                <a href="#certifications" class="hover:text-indigo-400 transition-colors">Credentials</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="mailto:pranoy.sinha1@gmail.com"
+                    class="text-sm code-font bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-4 py-2 rounded transition-all">
+                    Contact Agent
+                </a>
+            </div>
+        </div>
+    </header>
 
-<div class="card">
-  <h4>AWS Certified Solutions Architect</h4>
-  <p>Issued by AWS | 2024</p>
+    <!-- Hero / Bio Section -->
+    <section id="about" class="max-w-5xl mx-auto px-6 pt-16 pb-20 grid md:grid-cols-3 gap-12 items-center">
+        <div class="md:col-span-2 space-y-6">
+            <div
+                class="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider code-font">Open to Global
+                    Remote</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+                Pranoy Sinha
+            </h1>
+            <p class="text-xl font-medium text-gray-400">
+                Principal Data Infrastructure Architect & IIoT Expert
+            </p>
+            <p class="text-gray-400 leading-relaxed text-base">
+                With over 18 years of hands-on engineering maturity, I don't just close Jira tickets—I serve as an
+                operational insurance policy for high-stakes production environments[cite: 1]. As a self-taught, highly
+                disciplined architect, I specialize in building and maintaining distributed IIoT pipelines that process
+                thousands of live sensor streams under chaotic industrial data loads[cite: 1]. My focus is strictly on
+                system resilience and data integrity: ensuring zero-downtime availability for cloud infrastructure while
+                engineering robust PySpark and Apache Airflow layers to keep enterprise data 100% clean and
+                optimized[cite: 1].
+            </p>
+            <!-- Core Links -->
+            <div class="flex flex-wrap gap-4 pt-2">
+                <a href="https://linkedin.com" target="_blank"
+                    class="flex items-center space-x-2 bg-gray-900 border border-gray-800 hover:border-gray-700 px-4 py-2.5 rounded text-sm font-medium text-white transition-all">
+                    <i class="fab fa-linkedin text-blue-400 text-base"></i>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/pranoy-sinha" target="_blank"
+                    class="flex items-center space-x-2 bg-gray-900 border border-gray-800 hover:border-gray-700 px-4 py-2.5 rounded text-sm font-medium text-white transition-all">
+                    <i class="fab fa-github text-gray-400 text-base"></i>
+                    <span>GitHub Portfolio</span>
+                </a>
+                <a href="mailto:pranoy.sinha1@gmail.com"
+                    class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded text-sm font-medium text-white shadow-lg shadow-indigo-600/20 transition-all">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Me</span>
+                </a>
+            </div>
+        </div>
+        <!-- Live Stat Profile Box -->
+        <div class="bg-gray-900/60 border border-gray-800 p-6 rounded-xl space-y-6 code-font">
+            <div class="border-b border-gray-800 pb-4">
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Current Placement</p>
+                <p class="text-sm font-semibold text-white mt-1">EBIW Info Analytics Pvt. Ltd.[cite: 1]</p>
+                <p class="text-xs text-indigo-400 mt-0.5">Project Delivery Lead & Solutions Architect[cite: 1]</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-gray-500 uppercase">Experience</p>
+                    <p class="text-lg font-bold text-white mt-0.5">18+ Years[cite: 1]</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 uppercase">Uptime Core</p>
+                    <p class="text-lg font-bold text-emerald-400 mt-0.5">99.9% SLA</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-4 space-y-2 text-xs">
+                <p class="text-gray-400"><strong class="text-white">Primary Architecture:</strong> AWS, Azure, OCI[cite:
+                    1]</p>
+                <p class="text-gray-400"><strong class="text-white">Data Engines:</strong> Kafka, Airflow, PySpark[cite:
+                    1]</p>
+                <p class="text-gray-400"><strong class="text-white">Databases:</strong> Oracle 26ai, Postgres HA,
+                    MongoDB[cite: 1]</p>
+            </div>
+        </div>
+    </section>
 
-  <img src="images/aws-cert.jpg" alt="AWS Certificate"
-       class="cert-img"
-       onclick="openModal(this.src)">
+    <!-- Technical Strengths Section -->
+    <section id="experience" class="bg-gray-900/30 border-y border-gray-800/80 py-16">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-2xl font-bold text-white tracking-tight mb-10 flex items-center space-x-3">
+                <span class="w-1 h-6 bg-indigo-500 rounded-full"></span>
+                <span>Architectural Superpowers</span>
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Box 1 -->
+                <div class="bg-[#0D1321] border border-gray-800/80 p-6 rounded-lg space-y-3">
+                    <div
+                        class="w-10 h-10 bg-indigo-500/10 border border-indigo-500/30 rounded flex items-center justify-center text-indigo-400">
+                        <i class="fas fa-network-wired text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-semibold text-white">Distributed IIoT Pipelines</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Managing real-time telemetry ingestion workloads using MQTT and Apache Kafka across thousands of
+                        edge industrial sensors without message drops[cite: 1].
+                    </p>
+                </div>
+                <!-- Box 2 -->
+                <div class="bg-[#0D1321] border border-gray-800/80 p-6 rounded-lg space-y-3">
+                    <div
+                        class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center text-emerald-400">
+                        <i class="fas fa-broom text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-semibold text-white">Data Cleaning & Orchestration</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Engineering deterministic data-cleansing, deduplication, and schema validation workflows
+                        utilizing PySpark and Apache Airflow scheduling[cite: 1].
+                    </p>
+                </div>
+                <!-- Box 3 -->
+                <div class="bg-[#0D1321] border border-gray-800/80 p-6 rounded-lg space-y-3">
+                    <div
+                        class="w-10 h-10 bg-blue-500/10 border border-blue-500/30 rounded flex items-center justify-center text-blue-400">
+                        <i class="fas fa-server text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-semibold text-white">High-Availability Databases</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Deploying and managing zero-downtime, self-healing database clusters across AWS/OCI using Oracle
+                        26ai, Postgres (Patroni), and sharded MongoDB systems[cite: 1].
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <br><br>
-  <a href="CERTIFICATE_LINK" target="_blank">Verify Certificate</a>
-</div>
+    <!-- Key Production Projects -->
+    <section id="projects" class="max-w-5xl mx-auto px-6 py-20">
+        <h2 class="text-2xl font-bold text-white tracking-tight mb-10 flex items-center space-x-3">
+            <span class="w-1 h-6 bg-indigo-500 rounded-full"></span>
+            <span>Production-Grade Implementations</span>
+        </h2>
+        <div class="grid md:grid-cols-2 gap-8">
 
-<div class="card">
-  <h4>Google Cloud Professional Architect</h4>
-  <p>Issued by Google Cloud | 2023</p>
+            <!-- Project 1 -->
+            <div
+                class="bg-gray-900/40 border border-gray-800/80 p-6 rounded-xl card-glow transition-all flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs code-font text-indigo-400 mb-3">
+                        <span>DATA LAKEHOUSE / INGESTION</span>
+                        <span class="text-gray-500">Live Production</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">IIoT Telemetry & Cleaning Pipeline</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                        Engineered a high-velocity ingestion layer processing millions of data packets daily[cite: 1].
+                        Utilizes Apache Kafka and MQTT brokers to capture real-time signals, transforming and sanitizing
+                        messy or duplicate payloads via PySpark into unified TimescaleDB tables orchestrated seamlessly
+                        by Apache Airflow workflows[cite: 1].
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs code-font text-gray-400 pt-4 border-t border-gray-800/60">
+                    <span class="bg-gray-800 px-2 py-1 rounded">PySpark</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">Airflow</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">Kafka</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">AWS</span>
+                </div>
+            </div>
 
-  <img src="images/gcp-cert.jpg" alt="GCP Certificate"
-       class="cert-img"
-       onclick="openModal(this.src)">
+            <!-- Project 2 -->
+            <div
+                class="bg-gray-900/40 border border-gray-800/80 p-6 rounded-xl card-glow transition-all flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs code-font text-indigo-400 mb-3">
+                        <span>AI INFRASTRUCTURE / GEN AI</span>
+                        <span class="text-gray-500">Active Architecture</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">TransPoc AI Data Explorer</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                        Architected an advanced multi-table enterprise NL-to-SQL execution engine built on top of Oracle
+                        Autonomous Database (OCI)[cite: 1]. Integrates SelectAI capabilities with GPT-4o-mini and
+                        Anthropic Claude APIs via an orchestrated MCP Server layer, mapping live analytical outputs onto
+                        customized secure Oracle APEX administration dashboards[cite: 1].
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs code-font text-gray-400 pt-4 border-t border-gray-800/60">
+                    <span class="bg-gray-800 px-2 py-1 rounded">Oracle 26ai</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">APEX</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">FastAPI</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">MCP Server</span>
+                </div>
+            </div>
 
-  <br><br>
-  <a href="CERTIFICATE_LINK" target="_blank">Verify Certificate</a>
-</div>
+            <!-- Project 3 -->
+            <div
+                class="bg-gray-900/40 border border-gray-800/80 p-6 rounded-xl card-glow transition-all flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs code-font text-indigo-400 mb-3">
+                        <span>HIGH AVAILABILITY SYSTEMS</span>
+                        <span class="text-gray-500">Enterprise Ready</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">PostgreSQL & MongoDB HA Topologies</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                        Designed highly fault-tolerant enterprise database topologies across AWS EC2 multi-Availability
+                        Zones[cite: 1]. Deployed Postgres streaming clusters with Patroni consensus orchestration,
+                        paired with multi-shard MongoDB architecture configurations ensuring structural failover
+                        protection, zero data mutations, and automated S3 disaster recovery backings[cite: 1].
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs code-font text-gray-400 pt-4 border-t border-gray-800/60">
+                    <span class="bg-gray-800 px-2 py-1 rounded">Patroni</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">MongoDB Shards</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">HAProxy</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">Terraform</span>
+                </div>
+            </div>
 
-<!-- Lightbox Modal -->
-<div id="lightboxModal" class="modal">
-  <span class="close" onclick="closeModal()">&times;</span>
-  <img class="modal-content" id="modalImage">
-</div>
+            <!-- Project 4 -->
+            <div
+                class="bg-gray-900/40 border border-gray-800/80 p-6 rounded-xl card-glow transition-all flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs code-font text-indigo-400 mb-3">
+                        <span>SECURE API ARCHITECTURE</span>
+                        <span class="text-gray-500">Production</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Spring Boot 3.x Role-Based Microservices</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                        Delivered secure, stateless production REST APIs implementing Spring Security 6, Custom
+                        SecurityFilterChains, and dynamic role-based access controls (RBAC)[cite: 1]. Resolved complex
+                        injection dependencies and filter chain ordering loops, providing a hardened authentication
+                        layer for React frontends[cite: 1].
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs code-font text-gray-400 pt-4 border-t border-gray-800/60">
+                    <span class="bg-gray-800 px-2 py-1 rounded">Spring Boot 3</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">JWT Security</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">React</span>
+                    <span class="bg-gray-800 px-2 py-1 rounded">Postgres</span>
+                </div>
+            </div>
 
-<script>
-  function openModal(src) {
-    document.getElementById("lightboxModal").style.display = "block";
-    document.getElementById("modalImage").src = src;
-  }
+        </div>
+    </section>
 
-  function closeModal() {
-    document.getElementById("lightboxModal").style.display = "none";
-  }
-</script>
+    <!-- Professional Credentials & Certifications -->
+    <section id="certifications" class="bg-gray-900/20 border-t border-gray-800/80 py-20">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-2xl font-bold text-white tracking-tight mb-2 flex items-center space-x-3">
+                <span class="w-1 h-6 bg-indigo-500 rounded-full"></span>
+                <span>Verified Engineering Credentials</span>
+            </h2>
+            <p class="text-sm text-gray-500 mb-10">Official board verifications across key multi-cloud, infrastructure,
+                and enterprise data platforms.</p>
+
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 code-font text-xs">
+
+                <!-- Cert 1 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-indigo-400 text-2xl"><i class="fab fa-microsoft"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">AZ-400 DevOps Expert</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">Microsoft Certified</p>
+                    </div>
+                </div>
+
+                <!-- Cert 2 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-indigo-400 text-2xl"><i class="fab fa-microsoft"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">AZ-104 Azure Admin</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">Microsoft Certified[cite: 1]</p>
+                    </div>
+                </div>
+
+                <!-- Cert 3 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-orange-400 text-2xl"><i class="fas fa-database"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">OCI Multicloud Architect</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">Oracle Professional[cite: 1]</p>
+                    </div>
+                </div>
+
+                <!-- Cert 4 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-orange-400 text-2xl"><i class="fas fa-cloud"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">OCI Architect Associate</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">Oracle Certified[cite: 1]</p>
+                    </div>
+                </div>
+
+                <!-- Cert 5 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-emerald-400 text-2xl"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">AI Security & Governance</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">Securiti (April 2026)[cite: 1]</p>
+                    </div>
+                </div>
+
+                <!-- Cert 6 -->
+                <div class="bg-[#0B1220] border border-gray-800 p-4 rounded flex items-center space-x-4">
+                    <div class="text-blue-400 text-2xl"><i class="fab fa-python"></i></div>
+                    <div>
+                        <p class="font-bold text-white text-sm">Advanced Python Certification</p>
+                        <p class="text-gray-500 text-[11px] mt-0.5">IIT Madras NPTEL (Elite+Silver)[cite: 1]</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-900/60 bg-[#070A12] py-8 text-center text-xs text-gray-600 code-font">
+        <p>© 2026 Pranoy Sinha. Designed for extreme uptime & asynchronous trust.</p>
+    </footer>
 
 </body>
+
 </html>
