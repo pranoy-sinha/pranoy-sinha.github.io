@@ -48,7 +48,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── NAV ── */
         nav {
             position: fixed;
             top: 0;
@@ -91,7 +90,6 @@
             color: var(--accent);
         }
 
-        /* ── HERO ── */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -285,7 +283,6 @@
             }
         }
 
-        /* ── SECTIONS ── */
         section {
             padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 8vw, 7rem);
         }
@@ -317,7 +314,6 @@
             margin-bottom: 3rem;
         }
 
-        /* ── ABOUT / EXPERTISE ── */
         #about {
             background: var(--white);
         }
@@ -412,7 +408,6 @@
             }
         }
 
-        /* ── PROJECTS ── */
         #projects {
             background: var(--surface);
         }
@@ -504,7 +499,7 @@
 
         .certs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.25rem;
         }
 
@@ -527,31 +522,26 @@
             border-color: #c7d2fe;
         }
 
-        .cert-icon {
-            width: 44px;
-            height: 44px;
-            min-width: 44px;
+        /* Logo container — fixed square, white bg, subtle border */
+        .cert-logo {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             border-radius: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            overflow: hidden;
+            padding: 5px;
         }
 
-        .cert-icon.oci {
-            background: #fef3c7;
-        }
-
-        .cert-icon.azure {
-            background: #eff6ff;
-        }
-
-        .cert-icon.security {
-            background: #f0fdfa;
-        }
-
-        .cert-icon.python {
-            background: #fdf4ff;
+        .cert-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .cert-body {
@@ -589,6 +579,7 @@
             font-size: 0.68rem;
             font-weight: 600;
             letter-spacing: 0.04em;
+            white-space: nowrap;
         }
 
         .cert-badge.active {
@@ -620,7 +611,6 @@
             color: #92400e;
         }
 
-        /* ── STACK ── */
         #stack {
             background: var(--ink);
             color: white;
@@ -678,7 +668,6 @@
             flex-shrink: 0;
         }
 
-        /* ── CONTACT ── */
         #contact {
             background: var(--surface);
             text-align: center;
@@ -719,7 +708,6 @@
             box-shadow: 0 4px 14px rgba(26, 86, 219, 0.1);
         }
 
-        /* ── FOOTER ── */
         footer {
             background: var(--ink);
             color: #6b7280;
@@ -734,7 +722,6 @@
             text-decoration: none;
         }
 
-        /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -760,7 +747,6 @@
             }
         }
 
-        /* ── SCROLL REVEAL ── */
         .reveal {
             opacity: 0;
             transform: translateY(24px);
@@ -776,7 +762,6 @@
 
 <body>
 
-    <!-- NAV -->
     <nav>
         <span class="nav-logo">pranoy.sinha</span>
         <ul class="nav-links">
@@ -788,7 +773,6 @@
         </ul>
     </nav>
 
-    <!-- HERO -->
     <section class="hero">
         <p class="hero-eyebrow">Cloud &amp; AI Solutions Architect · Kolkata, India</p>
         <h1 class="hero-name">Pranoy <em>Sinha</em></h1>
@@ -798,21 +782,11 @@
                 Analytics</strong> — architecting systems that move fast and stay resilient.
         </p>
         <div class="hero-stats">
-            <div class="stat">
-                <span class="stat-number">18+</span>
-                <span class="stat-label">Years Experience</span>
+            <div class="stat"><span class="stat-number">18+</span><span class="stat-label">Years Experience</span></div>
+            <div class="stat"><span class="stat-number">5+</span><span class="stat-label">Cloud Certifications</span>
             </div>
-            <div class="stat">
-                <span class="stat-number">5+</span>
-                <span class="stat-label">Cloud Certifications</span>
-            </div>
-            <div class="stat">
-                <span class="stat-number">3</span>
-                <span class="stat-label">Cloud Platforms</span>
-            </div>
-            <div class="stat">
-                <span class="stat-number">∞</span>
-                <span class="stat-label">Commits to Production</span>
+            <div class="stat"><span class="stat-number">3</span><span class="stat-label">Cloud Platforms</span></div>
+            <div class="stat"><span class="stat-number">∞</span><span class="stat-label">Commits to Production</span>
             </div>
         </div>
         <div class="hero-cta">
@@ -845,7 +819,6 @@
         </div>
     </section>
 
-    <!-- ABOUT -->
     <section id="about">
         <div class="about-grid">
             <div class="about-text reveal">
@@ -862,18 +835,12 @@
                 <p>Targeting senior <strong>remote roles with UK &amp; European companies</strong> where I can apply
                     cloud-native expertise and AI integration at scale.</p>
                 <div class="expertise-tags">
-                    <span class="tag">Cloud Architecture</span>
-                    <span class="tag">Industrial IoT</span>
-                    <span class="tag">Applied AI / LLMs</span>
-                    <span class="tag">FastAPI</span>
-                    <span class="tag">React</span>
-                    <span class="tag">PostgreSQL</span>
-                    <span class="tag">Terraform</span>
-                    <span class="tag">Docker / Kubernetes</span>
-                    <span class="tag">Oracle 23ai</span>
-                    <span class="tag">Spring Boot</span>
-                    <span class="tag">MCP Servers</span>
-                    <span class="tag">CI/CD</span>
+                    <span class="tag">Cloud Architecture</span><span class="tag">Industrial IoT</span>
+                    <span class="tag">Applied AI / LLMs</span><span class="tag">FastAPI</span>
+                    <span class="tag">React</span><span class="tag">PostgreSQL</span>
+                    <span class="tag">Terraform</span><span class="tag">Docker / Kubernetes</span>
+                    <span class="tag">Oracle 23ai</span><span class="tag">Spring Boot</span>
+                    <span class="tag">MCP Servers</span><span class="tag">CI/CD</span>
                 </div>
             </div>
             <div class="skills-panel reveal" style="transition-delay:0.15s">
@@ -936,14 +903,12 @@
         </div>
     </section>
 
-    <!-- PROJECTS -->
     <section id="projects">
         <p class="section-label reveal">Selected Work</p>
         <h2 class="section-title reveal">Projects that ship.</h2>
         <p class="section-sub reveal">Production systems and POCs spanning cloud, IoT, AI, and full-stack engineering.
         </p>
         <div class="projects-grid">
-
             <div class="project-card reveal">
                 <p class="project-category">AI · Oracle · OCI</p>
                 <h3 class="project-title">Transpoc AI Data Explorer</h3>
@@ -951,81 +916,53 @@
                     Built a PL/SQL wrapper over DBMS_CLOUD_AI with regex sanitisation, full POC documentation, and a
                     beginner implementation guide. Includes security incident remediation for unauthorized ADB access.
                 </p>
-                <div class="project-tech">
-                    <span class="tech-badge">Oracle 23ai</span>
-                    <span class="tech-badge">OCI GenAI</span>
-                    <span class="tech-badge">APEX</span>
-                    <span class="tech-badge">PL/SQL</span>
-                    <span class="tech-badge">OpenAI GPT-4o-mini</span>
-                </div>
+                <div class="project-tech"><span class="tech-badge">Oracle 23ai</span><span class="tech-badge">OCI
+                        GenAI</span><span class="tech-badge">APEX</span><span class="tech-badge">PL/SQL</span><span
+                        class="tech-badge">OpenAI GPT-4o-mini</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.05s">
                 <p class="project-category">IoT · AWS · Kafka</p>
                 <h3 class="project-title">IIoT Telemetry Platform</h3>
                 <p class="project-desc">Full Industrial IoT stack: PostgreSQL 17 HA cluster with Patroni + etcd +
                     HAProxy, pgBackRest S3 backups with Glacier tiering, Apache Airflow + PySpark analytics pipeline.
-                    Sensor data from DEMOHW0-1 and DEMOHW0-2 flows into hourly IoT aggregations via MQTT and Kafka.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">PostgreSQL 17</span>
-                    <span class="tech-badge">Patroni</span>
-                    <span class="tech-badge">Kafka</span>
-                    <span class="tech-badge">MQTT</span>
-                    <span class="tech-badge">Airflow</span>
-                    <span class="tech-badge">PySpark</span>
-                    <span class="tech-badge">AWS EC2</span>
-                </div>
+                    Sensor data flows into hourly IoT aggregations via MQTT and Kafka.</p>
+                <div class="project-tech"><span class="tech-badge">PostgreSQL 17</span><span
+                        class="tech-badge">Patroni</span><span class="tech-badge">Kafka</span><span
+                        class="tech-badge">MQTT</span><span class="tech-badge">Airflow</span><span
+                        class="tech-badge">PySpark</span><span class="tech-badge">AWS EC2</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.1s">
                 <p class="project-category">Full Stack · AI · MCP</p>
                 <h3 class="project-title">RetailBot POC</h3>
                 <p class="project-desc">FastAPI + MCP Server + React chatbot with OpenAI GPT-4o-mini over a PostgreSQL
                     retail database on EC2. Implemented an enterprise-grade ID-based lazy loading pattern to prevent
                     customer PII from reaching OpenAI. GitHub Actions CI/CD pipeline to EC2.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">FastAPI</span>
-                    <span class="tech-badge">MCP</span>
-                    <span class="tech-badge">React</span>
-                    <span class="tech-badge">PostgreSQL</span>
-                    <span class="tech-badge">GPT-4o-mini</span>
-                    <span class="tech-badge">AWS EC2</span>
-                </div>
+                <div class="project-tech"><span class="tech-badge">FastAPI</span><span
+                        class="tech-badge">MCP</span><span class="tech-badge">React</span><span
+                        class="tech-badge">PostgreSQL</span><span class="tech-badge">GPT-4o-mini</span><span
+                        class="tech-badge">AWS EC2</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.15s">
                 <p class="project-category">Next.js · FastAPI · DevOps</p>
                 <h3 class="project-title">CareJourney Multi-Env Deployment</h3>
                 <p class="project-desc">Multi-environment (Dev / QA / Production) VPS deployment of a Next.js frontend
-                    and FastAPI backend. Solved Node.js version conflicts (v18 vs v22 via nvm), Nginx routing conflicts
-                    between internal /api/auth routes and FastAPI /api/v1, JWT secret alignment, and Set-Cookie header
-                    stripping.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">Next.js</span>
-                    <span class="tech-badge">FastAPI</span>
-                    <span class="tech-badge">PM2</span>
-                    <span class="tech-badge">Nginx</span>
-                    <span class="tech-badge">GitHub Actions</span>
-                    <span class="tech-badge">JWT</span>
-                </div>
+                    and FastAPI backend. Solved Node.js version conflicts, Nginx routing conflicts between /api/auth and
+                    FastAPI /api/v1, JWT secret alignment, and Set-Cookie header stripping.</p>
+                <div class="project-tech"><span class="tech-badge">Next.js</span><span
+                        class="tech-badge">FastAPI</span><span class="tech-badge">PM2</span><span
+                        class="tech-badge">Nginx</span><span class="tech-badge">GitHub Actions</span><span
+                        class="tech-badge">JWT</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.2s">
                 <p class="project-category">IoT · Docker · AWS ECR</p>
                 <h3 class="project-title">IoT POC — Docker / Kubernetes on EC2</h3>
                 <p class="project-desc">Containerised IoT stack on EC2 using Docker Compose, GitHub Actions CI/CD, and
                     AWS ECR. Managed IAM policies, ECR push/pull configuration, and docker-compose migration from local
                     build references to ECR image references. Phased toward AWS IoT Core and MSK.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">Docker</span>
-                    <span class="tech-badge">AWS ECR</span>
-                    <span class="tech-badge">EC2</span>
-                    <span class="tech-badge">GitHub Actions</span>
-                    <span class="tech-badge">MQTT</span>
-                    <span class="tech-badge">DynamoDB</span>
-                </div>
+                <div class="project-tech"><span class="tech-badge">Docker</span><span class="tech-badge">AWS
+                        ECR</span><span class="tech-badge">EC2</span><span class="tech-badge">GitHub Actions</span><span
+                        class="tech-badge">MQTT</span><span class="tech-badge">DynamoDB</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.25s">
                 <p class="project-category">Spring Boot · Java · REST</p>
                 <h3 class="project-title">healthApi &amp; simpleShop REST APIs</h3>
@@ -1033,46 +970,31 @@
                     authentication, pagination, and a generic ReturnSet&lt;T&gt; response wrapper. simpleShop adds order
                     management, Jackson serialisation fixes, and a GlobalExceptionHandler for production-safe error
                     handling.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">Spring Boot 3.x</span>
-                    <span class="tech-badge">Spring Security 6</span>
-                    <span class="tech-badge">JWT</span>
-                    <span class="tech-badge">JPA/Hibernate</span>
-                    <span class="tech-badge">Lombok</span>
-                </div>
+                <div class="project-tech"><span class="tech-badge">Spring Boot 3.x</span><span class="tech-badge">Spring
+                        Security 6</span><span class="tech-badge">JWT</span><span
+                        class="tech-badge">JPA/Hibernate</span><span class="tech-badge">Lombok</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.3s">
                 <p class="project-category">Infrastructure · Terraform · AWS</p>
                 <h3 class="project-title">AWS Transit Gateway Inter-Region Peering</h3>
                 <p class="project-desc">Terraform-managed inter-region peering between Mumbai (ap-south-1) and Hyderabad
                     (ap-south-2), including VPC endpoints for SSM Session Manager on private subnets. Modular
                     architecture pattern reusable across AWS and Azure equivalents.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">Terraform</span>
-                    <span class="tech-badge">AWS Transit Gateway</span>
-                    <span class="tech-badge">VPC</span>
-                    <span class="tech-badge">SSM</span>
-                    <span class="tech-badge">ap-south-1</span>
-                </div>
+                <div class="project-tech"><span class="tech-badge">Terraform</span><span class="tech-badge">AWS Transit
+                        Gateway</span><span class="tech-badge">VPC</span><span class="tech-badge">SSM</span><span
+                        class="tech-badge">ap-south-1</span></div>
             </div>
-
             <div class="project-card reveal" style="transition-delay:0.35s">
                 <p class="project-category">PostgreSQL · DevOps · Migration</p>
                 <h3 class="project-title">78GB PostgreSQL Logical Replication Migration</h3>
                 <p class="project-desc">Zero-downtime migration of rsb_proddb (78GB+) from AWS EC2 to Hostinger VPS
                     using logical replication. Resolved OID mismatches, max_replication_slots exhaustion, partition
-                    table replica identity issues, and pg_hba.conf gaps. Followed by a nightly pg_dump + rsync backup
-                    pipeline with SMTP alerts.</p>
-                <div class="project-tech">
-                    <span class="tech-badge">PostgreSQL</span>
-                    <span class="tech-badge">Logical Replication</span>
-                    <span class="tech-badge">pg_dump</span>
-                    <span class="tech-badge">rsync</span>
-                    <span class="tech-badge">Shell Scripts</span>
-                </div>
+                    table replica identity issues, and pg_hba.conf gaps. Nightly pg_dump + rsync backup pipeline with
+                    SMTP alerts.</p>
+                <div class="project-tech"><span class="tech-badge">PostgreSQL</span><span class="tech-badge">Logical
+                        Replication</span><span class="tech-badge">pg_dump</span><span
+                        class="tech-badge">rsync</span><span class="tech-badge">Shell Scripts</span></div>
             </div>
-
         </div>
     </section>
 
@@ -1084,9 +1006,17 @@
             engineering.</p>
         <div class="certs-grid">
 
+            <!-- Oracle OCI Multicloud Architect Professional -->
             <a href="https://catalog-education.oracle.com/ords/certview/sharebadge?id=3C501D07C1E9475ACE184"
                 target="_blank" class="cert-card reveal">
-                <div class="cert-icon oci">☁️</div>
+                <div class="cert-logo">
+                    <!-- Oracle SVG logo -->
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="32" cy="32" rx="32" ry="32" fill="#C74634" /><text x="50%" y="54%"
+                            dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif"
+                            font-weight="bold" font-size="22" fill="white">OCI</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Oracle Cloud Infrastructure</p>
                     <p class="cert-name">OCI Multicloud Architect Professional</p>
@@ -1095,9 +1025,16 @@
                 <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- Oracle OCI Architect Associate -->
             <a href="https://catalog-education.oracle.com/ords/certview/sharebadge?id=30642E2057B5DECDCF64BB6328862E9F2A0BCD1D6D9AB50F0569427514C17AFF"
                 target="_blank" class="cert-card reveal" style="transition-delay:0.05s">
-                <div class="cert-icon oci">☁️</div>
+                <div class="cert-logo">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="32" cy="32" rx="32" ry="32" fill="#C74634" /><text x="50%" y="54%"
+                            dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif"
+                            font-weight="bold" font-size="22" fill="white">OCI</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Oracle Cloud Infrastructure</p>
                     <p class="cert-name">OCI Architect Associate</p>
@@ -1106,9 +1043,18 @@
                 <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- Microsoft AZ-104 -->
             <a href="https://learn.microsoft.com/en-us/users/pranoysinha-8765/credentials/21f4a9e0d1f5c531"
                 target="_blank" class="cert-card reveal" style="transition-delay:0.1s">
-                <div class="cert-icon azure">⚡</div>
+                <div class="cert-logo">
+                    <!-- Microsoft 4-square logo SVG -->
+                    <svg viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="0" width="11" height="11" fill="#F25022" />
+                        <rect x="12" y="0" width="11" height="11" fill="#7FBA00" />
+                        <rect x="0" y="12" width="11" height="11" fill="#00A4EF" />
+                        <rect x="12" y="12" width="11" height="11" fill="#FFB900" />
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Microsoft Azure</p>
                     <p class="cert-name">Azure Administrator Associate (AZ-104)</p>
@@ -1117,20 +1063,36 @@
                 <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- Microsoft AZ-400 -->
             <a href="https://learn.microsoft.com/en-us/users/pranoysinha-8765/credentials/7e32347d62a9593a"
-                target="_blank" class="cert-card reveal" style="transition-delay:0.1s">
-                <div class="cert-icon azure">⚡</div>
+                target="_blank" class="cert-card reveal" style="transition-delay:0.15s">
+                <div class="cert-logo">
+                    <svg viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="0" width="11" height="11" fill="#F25022" />
+                        <rect x="12" y="0" width="11" height="11" fill="#7FBA00" />
+                        <rect x="0" y="12" width="11" height="11" fill="#00A4EF" />
+                        <rect x="12" y="12" width="11" height="11" fill="#FFB900" />
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Microsoft Azure</p>
-                    <p class="cert-name">Azure DevOps Engineer (AZ-400)</p>
+                    <p class="cert-name">Azure DevOps Engineer Expert (AZ-400)</p>
                     <p class="cert-date">Microsoft · 2024</p>
                 </div>
                 <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- Securiti AI Security -->
             <a href="https://education.securiti.ai/verification/1453C9592-1453C9401-13F1877E0/" target="_blank"
-                class="cert-card reveal" style="transition-delay:0.15s">
-                <div class="cert-icon security">🔐</div>
+                class="cert-card reveal" style="transition-delay:0.2s">
+                <div class="cert-logo">
+                    <!-- Securiti — shield-shaped S mark in brand teal -->
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 4 L42 12 L42 26 C42 36 33 43 24 46 C15 43 6 36 6 26 L6 12 Z" fill="#00B4D8" />
+                        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Arial,sans-serif" font-weight="bold" font-size="20" fill="white">S</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Securiti</p>
                     <p class="cert-name">AI Security &amp; Governance</p>
@@ -1139,37 +1101,62 @@
                 <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- NPTEL Python -->
             <a href="https://archive.nptel.ac.in/content/noc/NOC20/SEM2/Ecertificates/106/noc20-cs83/Course/NPTEL20CS83S61810504129790.jpg"
-                target="_blank" class="cert-card reveal" style="transition-delay:0.2s">
-                <div class="cert-icon python">🐍</div>
+                target="_blank" class="cert-card reveal" style="transition-delay:0.25s">
+                <div class="cert-logo">
+                    <!-- NPTEL — IIT branded mark -->
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="48" height="48" rx="6" fill="#003087" />
+                        <text x="50%" y="40%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Arial,sans-serif" font-weight="bold" font-size="9" fill="white">NPTEL</text>
+                        <text x="50%" y="68%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Arial,sans-serif" font-size="7" fill="#FFD700">IIT Madras</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
-                    <p class="cert-issuer">NPTEL · IIT (Madras)</p>
+                    <p class="cert-issuer">NPTEL · IIT Madras</p>
                     <p class="cert-name">Python Programming</p>
                     <p class="cert-date">NPTEL · Elite + Silver</p>
                 </div>
                 <span class="cert-badge elite">Elite + Silver</span>
             </a>
 
+            <!-- Udemy AWS Networking -->
             <a href="https://www.udemy.com/certificate/UC-8598c478-97de-4777-91e9-5f561a57e490/" target="_blank"
-                class="cert-card reveal" style="transition-delay:0.2s">
-                <div class="cert-icon python">🐍</div>
+                class="cert-card reveal" style="transition-delay:0.3s">
+                <div class="cert-logo">
+                    <!-- Udemy purple U logo -->
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="48" height="48" rx="6" fill="#A435F0" />
+                        <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Georgia,serif" font-weight="bold" font-size="30" fill="white">u</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Udemy</p>
-                    <p class="cert-name">AWS Networking - Zero to Hero: Masterclass</p>
+                    <p class="cert-name">AWS Networking — Zero to Hero Masterclass</p>
                     <p class="cert-date">Udemy · 2024</p>
                 </div>
-                <span class="cert-badge elite">Active</span>
+                <span class="cert-badge active">Active</span>
             </a>
 
+            <!-- Udemy Azure Zero to Hero -->
             <a href="https://www.udemy.com/certificate/UC-583c6714-19f0-4a58-b255-8bb0a230aa47/" target="_blank"
-                class="cert-card reveal" style="transition-delay:0.2s">
-                <div class="cert-icon python">🐍</div>
+                class="cert-card reveal" style="transition-delay:0.35s">
+                <div class="cert-logo">
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="48" height="48" rx="6" fill="#A435F0" />
+                        <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle"
+                            font-family="Georgia,serif" font-weight="bold" font-size="30" fill="white">u</text>
+                    </svg>
+                </div>
                 <div class="cert-body">
                     <p class="cert-issuer">Udemy</p>
-                    <p class="cert-name">Azure Zero to Hero: Master Microsoft Cloud from Scratch </p>
+                    <p class="cert-name">Azure Zero to Hero: Master Microsoft Cloud</p>
                     <p class="cert-date">Udemy · 2024</p>
                 </div>
-                <span class="cert-badge elite">Active</span>
+                <span class="cert-badge active">Active</span>
             </a>
 
         </div>
@@ -1180,7 +1167,6 @@
         </div>
     </section>
 
-    <!-- TECH STACK -->
     <section id="stack">
         <p class="section-label reveal">Tech Stack</p>
         <h2 class="section-title reveal">What I build with.</h2>
@@ -1190,10 +1176,10 @@
             <div class="stack-col reveal">
                 <h4>Cloud Platforms</h4>
                 <div class="stack-items">
-                    <span class="stack-item"><span class="stack-dot"></span>AWS (ap-south-1, EC2, ECR, IoT Core, S3,
+                    <span class="stack-item"><span class="stack-dot"></span>AWS (EC2, ECR, IoT Core, S3,
                         DynamoDB)</span>
                     <span class="stack-item"><span class="stack-dot"></span>Oracle Cloud Infrastructure (OCI)</span>
-                    <span class="stack-item"><span class="stack-dot"></span>Microsoft Azure (AZ-104)</span>
+                    <span class="stack-item"><span class="stack-dot"></span>Microsoft Azure (AZ-104 · AZ-400)</span>
                     <span class="stack-item"><span class="stack-dot"></span>Google Cloud Platform (GCS)</span>
                 </div>
             </div>
@@ -1203,7 +1189,7 @@
                     <span class="stack-item"><span class="stack-dot"></span>Python · FastAPI · Flask</span>
                     <span class="stack-item"><span class="stack-dot"></span>Spring Boot 3.x · Spring Security 6</span>
                     <span class="stack-item"><span class="stack-dot"></span>Node.js · Express</span>
-                    <span class="stack-item"><span class="stack-dot"></span>MCP Servers · REST · GraphQL</span>
+                    <span class="stack-item"><span class="stack-dot"></span>MCP Servers · RestAPI · GraphQL</span>
                 </div>
             </div>
             <div class="stack-col reveal" style="transition-delay:0.1s">
@@ -1239,13 +1225,12 @@
                     <span class="stack-item"><span class="stack-dot"></span>OpenAI GPT-4o-mini · Claude API</span>
                     <span class="stack-item"><span class="stack-dot"></span>OCI GenAI · DBMS_CLOUD_AI</span>
                     <span class="stack-item"><span class="stack-dot"></span>Apache Airflow · PySpark</span>
-                    <span class="stack-item"><span class="stack-dot"></span>MQTT · Kafka · MSK</span>
+                    <span class="stack-item"><span class="stack-dot"></span>MQTT · Kafka</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact">
         <p class="section-label reveal">Get in touch</p>
         <h2 class="section-title reveal">Open to senior remote roles<br />across UK &amp; Europe.</h2>
@@ -1284,32 +1269,23 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer>
         <p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a
                 href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p>
     </footer>
 
     <script>
-        // Scroll reveal
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) { e.target.classList.add('visible'); }
-            });
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
         reveals.forEach(el => observer.observe(el));
 
-        // Skill bars trigger on scroll
         const skillSection = document.querySelector('#about');
         const skillObserver = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
-                    document.querySelectorAll('.skill-fill').forEach(bar => {
-                        bar.style.animation = 'none';
-                        void bar.offsetWidth;
-                        bar.style.animation = '';
-                    });
+                    document.querySelectorAll('.skill-fill').forEach(bar => { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; });
                     skillObserver.disconnect();
                 }
             });
