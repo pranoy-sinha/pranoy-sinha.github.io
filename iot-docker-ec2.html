@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: IoT POC — Docker / Kubernetes on EC2 | Pranoy Sinha</title>
+<meta name="description" content="Containerising an Industrial IoT stack on AWS EC2 with Docker Compose, GitHub Actions CI/CD, AWS ECR, and a phased migration toward AWS IoT Core and MSK."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · IoT · Docker · AWS ECR</p>
+    <h1 class="cs-title">IoT POC — Docker / Kubernetes on EC2</h1>
+    <p class="cs-subtitle">Containerising an IoT telemetry stack with Docker Compose and AWS ECR, building a CI/CD pipeline that automatically rebuilds and redeploys on every push — as a stepping stone toward AWS IoT Core and MSK.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Cloud & DevOps Architect</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Platform</span><span class="cs-meta-value">AWS EC2 · ECR · IAM</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Industrial IoT</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">Containerisation & CI/CD</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>An IoT stack that was impossible to deploy consistently across environments</h2>
+        <p>The IoT pipeline (MQTT broker, Kafka, data consumer, Node.js simulator) was running as bare processes on EC2 with manual start scripts. Every environment change meant SSH-ing in, stopping processes, pulling code, and restarting — with no consistency, no rollback, and no visibility into what version was actually running.</p>
+        <p>The goal: <strong>containerise the entire stack</strong>, push images to AWS ECR, and have GitHub Actions automatically build, push, and redeploy on every merge to main — with a clear path toward managed AWS IoT Core and MSK in Phase 2.</p>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Architecture</p>
+        <h2>ECR-backed Docker Compose with GitHub Actions CI/CD</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>Dockerise each service</strong><span>Individual Dockerfiles for: MQTT broker (Eclipse Mosquitto), Kafka + Zookeeper (Bitnami images), Python data consumer, Node.js device simulator, and a React dashboard. Each image tagged with Git SHA for traceability.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>AWS ECR private registry</strong><span>One ECR repository per service. IAM role attached to EC2 instance with ecr:GetAuthorizationToken, ecr:BatchGetImage, ecr:GetDownloadUrlForLayer permissions. GitHub Actions runner uses OIDC federation — no long-lived AWS keys stored in secrets.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>GitHub Actions CI/CD pipeline</strong><span>On push to main: (1) build images, (2) push to ECR with both :latest and :{git-sha} tags, (3) SSH to EC2 and run docker-compose pull followed by docker-compose up -d. Zero-downtime rolling restart for stateless services.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>docker-compose.yml migration from local builds to ECR references</strong><span>Replaced build: . directives with image: {account}.dkr.ecr.ap-south-1.amazonaws.com/{service}:latest throughout. Added a pre-pull step that authenticates ECR before compose runs.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>DynamoDB for device state persistence</strong><span>Device telemetry snapshots written to DynamoDB on every cycle. No persistent volume required for the simulator container — state survives container restarts via DynamoDB reads on startup.</span></div></div>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Challenges</p>
+        <h2>IAM, ECR auth, and docker-compose ordering</h2>
+        <ul class="cs-challenges">
+            <li><div class="ch-icon">🔑</div><div class="ch-body"><strong>ECR authentication expiring mid-pipeline</strong><span>ECR tokens expire after 12 hours. The GitHub Actions pipeline was caching credentials and failing on long-running jobs. Fixed by adding a fresh aws ecr get-login-password call at the start of every deploy step, not just once per workflow.</span></div></li>
+            <li><div class="ch-icon">📦</div><div class="ch-body"><strong>Kafka not ready when consumer container started</strong><span>docker-compose depends_on only waits for container start, not service readiness. The Kafka consumer crashed on startup because Kafka wasn't yet accepting connections. Fixed with a healthcheck on the Kafka container and condition: service_healthy in depends_on.</span></div></li>
+            <li><div class="ch-icon">🌐</div><div class="ch-body"><strong>MQTT broker unreachable from simulator after containerisation</strong><span>The simulator used localhost:1883 hardcoded. Inside Docker, containers communicate via service names. Fixed by replacing localhost with the docker-compose service name mqtt-broker and using Docker's internal DNS.</span></div></li>
+        </ul>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>Deployments went from 20-minute manual ops to a git push</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">&lt;5min</div><div class="oc-label">Full stack deploy time</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">Git SHA</div><div class="oc-label">Every image version traceable</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Manual SSH deploys required</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">Phase 2</div><div class="oc-label">Ready for AWS IoT Core + MSK</div></div>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">Docker</span><span class="tech-pill">Docker Compose</span><span class="tech-pill">AWS ECR</span><span class="tech-pill">AWS EC2</span><span class="tech-pill">GitHub Actions</span><span class="tech-pill">OIDC Federation</span><span class="tech-pill">MQTT</span><span class="tech-pill">Apache Kafka</span><span class="tech-pill">DynamoDB</span><span class="tech-pill">IAM Roles</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link active">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>

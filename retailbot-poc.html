@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: Retail Industry Bot POC | Pranoy Sinha</title>
+<meta name="description" content="Building an AI-powered retail chatbot with FastAPI, MCP Server, React and OpenAI GPT-4o-mini — with enterprise PII protection patterns."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · Full Stack · AI · MCP</p>
+    <h1 class="cs-title">Retail Industry Bot POC</h1>
+    <p class="cs-subtitle">An agentic AI chatbot that lets retail staff query live order, inventory, and customer data using natural language — with an enterprise-grade pattern to ensure customer PII never reaches the AI model.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Full Stack Architect & Developer</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Platform</span><span class="cs-meta-value">AWS EC2 · Nginx · GitHub Actions</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Retail Operations</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">AI / MCP Agentic POC</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>Retail staff spending 20+ minutes per shift hunting through dashboards for basic answers</h2>
+        <p>The retail client's operations team needed to answer questions like "what's the stock level for SKU-4821?", "how many orders are pending dispatch in the North region?" and "show me returns from last Tuesday" — all requiring separate dashboard logins and SQL knowledge.</p>
+        <p>The goal was a conversational interface where staff could <strong>ask questions in plain English</strong> and receive accurate, live answers from the PostgreSQL database — without any SQL or dashboard navigation.</p>
+        <div class="cs-callout cs-callout-warn">
+            <p><strong>Critical Constraint:</strong> Customer PII (names, addresses, phone numbers, email) must never be sent to the OpenAI API. GDPR and internal data policy required all external AI calls to operate on anonymised identifiers only.</p>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Architecture</p>
+        <h2>MCP Server as the intelligent data access layer</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>React Chat UI (Claude-style interface)</strong><span>A clean streaming chat interface built in React with SSE (Server-Sent Events) for real-time response streaming. Users type questions; responses stream token by token.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>FastAPI Orchestration Layer</strong><span>Receives the user message, manages conversation history, calls the AI model with the appropriate tools available, and routes tool call results back through the agentic loop until the model signals it has a final answer.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>MCP Server (Tool Definitions)</strong><span>Exposes typed tools: get_order_by_id(order_id), get_stock_level(sku), list_pending_dispatch(region, date_range). Each tool returns only the fields needed — never full customer records.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>ID-Based Lazy Loading (PII Protection)</strong><span>The AI model is given only numeric IDs in its context. When it needs customer details, the MCP tool fetches only the specific fields requested (e.g. city, not name+email+phone). Full PII records are assembled server-side and presented to the user — never sent to OpenAI.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>PostgreSQL Retail Database</strong><span>Normalised retail schema: orders, order_items, customers, products, inventory, regions. MCP tools use parameterised queries exclusively — no dynamic SQL construction.</span></div></div>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Challenges</p>
+        <h2>Engineering the PII boundary correctly</h2>
+        <ul class="cs-challenges">
+            <li><div class="ch-icon">🔒</div><div class="ch-body"><strong>Preventing PII leakage through the agentic loop</strong><span>Early versions allowed the model to request full customer objects. The fix was strict tool schema design: no tool returns name, email, phone, or address. Customer identity is always represented as customer_id in AI context, with display-layer enrichment handled post-response server-side.</span></div></li>
+            <li><div class="ch-icon">🔄</div><div class="ch-body"><strong>Agentic loop termination — model not knowing when to stop</strong><span>GPT-4o-mini occasionally called tools in circles (fetching the same order twice). Fixed by adding a maximum tool call depth limit of 8 and a loop-detection check that identifies repeated (tool, argument) pairs within a conversation turn.</span></div></li>
+            <li><div class="ch-icon">⚡</div><div class="ch-body"><strong>SSE streaming dropped on Nginx reverse proxy</strong><span>Nginx buffered the SSE stream, causing the UI to receive responses in one burst rather than streaming. Fixed by adding X-Accel-Buffering: no and proxy_buffering off to the Nginx location block for the /stream endpoint.</span></div></li>
+        </ul>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>Staff got answers in seconds, not dashboards</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">~8s</div><div class="oc-label">Average query response time</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">PII records sent to OpenAI</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">92%</div><div class="oc-label">Query accuracy in testing</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">CI/CD</div><div class="oc-label">Automated deploy via GitHub Actions</div></div>
+        </div>
+        <div class="cs-callout cs-callout-success">
+            <p><strong>Result:</strong> The POC demonstrated that an agentic MCP architecture could safely expose live retail data to AI without any PII reaching the model. The client approved Phase 2: expanding tool coverage to supplier and logistics data.</p>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">FastAPI</span><span class="tech-pill">MCP Server</span><span class="tech-pill">React</span><span class="tech-pill">PostgreSQL</span><span class="tech-pill">OpenAI GPT-4o-mini</span><span class="tech-pill">SSE Streaming</span><span class="tech-pill">AWS EC2</span><span class="tech-pill">Nginx</span><span class="tech-pill">GitHub Actions</span><span class="tech-pill">Let's Encrypt SSL</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link active">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>

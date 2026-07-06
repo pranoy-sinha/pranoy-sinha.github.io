@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: 120GB PostgreSQL Logical Replication Migration | Pranoy Sinha</title>
+<meta name="description" content="Zero-downtime migration of a 120GB PostgreSQL production database from AWS EC2 to Hostinger VPS using logical replication — resolving OID mismatches, WAL slot exhaustion, and partition table issues."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · PostgreSQL · DevOps · Migration</p>
+    <h1 class="cs-title">120GB PostgreSQL Logical Replication Migration</h1>
+    <p class="cs-subtitle">Moving a live 120GB+ production PostgreSQL database from AWS EC2 to Hostinger VPS with zero downtime — navigating OID mismatches, WAL slot exhaustion, partition table replica identity failures, and disk space constraints.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Database & DevOps Engineer</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Database Size</span><span class="cs-meta-value">120GB+ (rsb_proddb)</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Migration Method</span><span class="cs-meta-value">Logical Replication</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">Zero-Downtime DB Migration</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>A production database that couldn't afford an hour of downtime — let alone a weekend</h2>
+        <p>rsb_proddb was a 120GB+ PostgreSQL 14 database on AWS EC2 (ap-south-1) serving a live production application. The client needed to migrate to Hostinger VPS to reduce infrastructure costs — but the application had no maintenance window available. Any downtime meant lost transactions and customer-facing errors.</p>
+        <p>The standard approach — pg_dump and restore — would require 4–6 hours of downtime for a database this size. <strong>Logical replication</strong> was the only viable path: replicate changes continuously from source to target, then cut over with seconds of downtime at the moment of switchover.</p>
+        <div class="cs-callout cs-callout-warn">
+            <p><strong>The risk:</strong> Logical replication in PostgreSQL has strict requirements around replica identity, partition tables, sequences, and OIDs — any one of which can silently cause replication to lag or fail, without obvious error messages.</p>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Migration Approach</p>
+        <h2>Six phases — the wrong order would be catastrophic</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>Schema migration first (pg_dump schema-only)</strong><span>Exported schema (DDL only) from source and applied to target. This ensures tables, indexes, constraints, and sequences exist before replication starts — replication cannot create tables, only replicate rows.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Set replica identity on all tables</strong><span>Logical replication requires REPLICA IDENTITY FULL or a primary key on every replicated table. Several legacy tables had neither. Applied REPLICA IDENTITY FULL to those tables — with the trade-off of larger WAL records for updates and deletes.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>Create publication on source and subscription on target</strong><span>CREATE PUBLICATION rsb_pub FOR ALL TABLES on source. CREATE SUBSCRIPTION rsb_sub on target pointing to source connection string. PostgreSQL begins copying initial table data (table sync phase) before streaming live WAL changes.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>Monitor replication lag until caught up</strong><span>Monitored pg_stat_replication.write_lag and pg_replication_slots on source. Waited for lag to reach near-zero (under 100ms) across all tables before scheduling cutover.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Cutover — application config switch + sequence sync</strong><span>Put application into maintenance mode (30 seconds), synced all sequences manually (sequences do not replicate), updated application DATABASE_URL to point to target, removed maintenance mode. Total application downtime: 47 seconds.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">6</div><div class="cs-step-body"><strong>Post-migration: nightly pg_dump + rsync backup pipeline</strong><span>Built a shell script that runs pg_dump at 02:00 IST daily, compresses with gzip, rsyncs to a remote backup server, and sends an SMTP alert (success or failure) to the DBA team.</span></div></div>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Challenges</p>
+        <h2>Four problems that nearly derailed the migration</h2>
+        <ul class="cs-challenges">
+            <li><div class="ch-icon">🔢</div><div class="ch-body"><strong>OID mismatches breaking foreign key constraints on target</strong><span>pg_dump schema-only doesn't preserve OIDs. Several system catalog references used OIDs internally (custom types, certain constraints). Fixed by using pg_dump with --no-oid and reviewing all custom type definitions manually before applying to target.</span></div></li>
+            <li><div class="ch-icon">💾</div><div class="ch-body"><strong>WAL slot exhaustion filling EC2 disk</strong><span>The replication slot on source retains WAL until the subscriber confirms receipt. A 4-hour network interruption caused the slot to hold 18GB of WAL, nearly filling the EC2 disk. Added max_slot_wal_keep_size = 10GB to postgresql.conf and a CloudWatch alarm on disk utilisation.</span></div></li>
+            <li><div class="ch-icon">📊</div><div class="ch-body"><strong>Partition tables not replicating — silent failure</strong><span>PostgreSQL logical replication does not automatically replicate partition child tables — only the parent. Tables with monthly partitions (audit_log_2024_01, audit_log_2024_02 etc.) were silently excluded from replication. Fixed by explicitly listing all partition children in the publication, and adding a pre-migration script to auto-generate the partition list.</span></div></li>
+            <li><div class="ch-icon">🌐</div><div class="ch-body"><strong>pg_hba.conf blocking replication connection</strong><span>Source EC2 security group allowed the target VPS IP, but pg_hba.conf was missing the replication entry for the target IP. The subscription silently failed to connect. Fixed by adding: host replication rsb_repl_user {target_ip}/32 md5 to pg_hba.conf and reloading PostgreSQL.</span></div></li>
+        </ul>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>120GB moved — 47 seconds of customer-facing downtime</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">47s</div><div class="oc-label">Total application downtime during cutover</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">120GB+</div><div class="oc-label">Data migrated successfully</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Rows lost during migration</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">Daily</div><div class="oc-label">Automated backup + SMTP alert</div></div>
+        </div>
+        <div class="cs-callout cs-callout-success">
+            <p><strong>Result:</strong> The migration completed without data loss. Post-migration verification using row counts, sequence values, and spot-check queries against both databases confirmed 100% data integrity. The client reduced database infrastructure costs by 60% compared to EC2.</p>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">PostgreSQL 14</span><span class="tech-pill">Logical Replication</span><span class="tech-pill">pg_dump</span><span class="tech-pill">rsync</span><span class="tech-pill">Shell Scripts</span><span class="tech-pill">AWS EC2</span><span class="tech-pill">Hostinger VPS</span><span class="tech-pill">SMTP Alerts</span><span class="tech-pill">pgBackRest</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link active">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>

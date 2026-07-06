@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: AWS Transit Gateway Inter-Region Peering | Pranoy Sinha</title>
+<meta name="description" content="Terraform-managed multi-region AWS Transit Gateway peering between Mumbai and Hyderabad with VPC endpoints for SSM and modular IaC patterns."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · Infrastructure · Terraform · AWS</p>
+    <h1 class="cs-title">AWS Transit Gateway Inter-Region Peering</h1>
+    <p class="cs-subtitle">Designing and provisioning multi-region AWS network infrastructure with Terraform — connecting Mumbai and Hyderabad VPCs via Transit Gateway, with private SSM access and a modular IaC pattern built to scale.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Cloud Infrastructure Architect</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Platform</span><span class="cs-meta-value">AWS ap-south-1 & ap-south-2</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Network Infrastructure / IaC</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">Terraform Infrastructure Module</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>Two regional workloads that needed to talk — privately, without a public internet hop</h2>
+        <p>The organisation had workloads in AWS Mumbai (ap-south-1) — production application servers and databases — and was expanding to Hyderabad (ap-south-2) for disaster recovery and a secondary processing tier. Services in both regions needed to communicate over private IPs without traversing the public internet.</p>
+        <p>Additionally, EC2 instances in private subnets (no public IP, no bastion host) needed to be managed via <strong>AWS Systems Manager Session Manager</strong> — which requires VPC endpoints to reach the SSM, SSM Messages, and EC2 Messages services privately.</p>
+        <div class="cs-callout">
+            <p><strong>Constraint:</strong> All infrastructure must be 100% Terraform-managed — no console clicks. The module must be reusable: adding a third region should require only a new module instantiation, not changes to existing code.</p>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Architecture</p>
+        <h2>Hub-and-spoke Transit Gateway topology</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>VPC Module — reusable per region</strong><span>A Terraform module provisions a complete VPC: CIDR block, public and private subnets across 2 AZs, Internet Gateway, NAT Gateway (per AZ for HA), and route tables. Called once per region with different CIDR ranges to avoid overlap.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Transit Gateway per region</strong><span>One TGW in Mumbai, one in Hyderabad. Each TGW has a route table. VPC attachments connect the regional VPCs to their local TGW. Route propagation enabled so VPC routes are automatically shared.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>Inter-region TGW Peering</strong><span>aws_ec2_transit_gateway_peering_attachment connects Mumbai TGW to Hyderabad TGW. The peering attachment must be accepted in the peer region — handled via a cross-region provider alias in Terraform (provider = aws.hyderabad).</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>VPC Endpoints for SSM on private subnets</strong><span>Three Interface endpoints per VPC: com.amazonaws.{region}.ssm, com.amazonaws.{region}.ssmmessages, com.amazonaws.{region}.ec2messages. Attached to private subnet route tables. EC2 instances in private subnets can now be accessed via SSM without a public IP or bastion.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Security Groups with least-privilege rules</strong><span>Application security groups allow traffic only from the TGW attachment CIDRs, not from 0.0.0.0/0. SSM endpoint security group allows HTTPS (443) inbound from the VPC CIDR only.</span></div></div>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Challenges</p>
+        <h2>Cross-region Terraform is non-trivial</h2>
+        <ul class="cs-challenges">
+            <li><div class="ch-icon">🌍</div><div class="ch-body"><strong>Cross-region provider aliasing in Terraform</strong><span>Resources in different regions must use provider aliases. The TGW peering acceptance resource lives in ap-south-2 but is triggered by the attachment created in ap-south-1. Required careful use of provider = aws.ap_south_2 on the acceptance resource and explicit depends_on to sequence creation correctly.</span></div></li>
+            <li><div class="ch-icon">🛣️</div><div class="ch-body"><strong>Route propagation not covering all subnets</strong><span>After TGW attachment, only the main route table received propagated routes. Private subnets used a custom route table that wasn't associated with the TGW route propagation. Fixed by explicitly associating the custom route table with the TGW attachment and adding propagation there.</span></div></li>
+            <li><div class="ch-icon">⏳</div><div class="ch-body"><strong>TGW peering attachment state management</strong><span>Inter-region TGW peering has an async acceptance step. Terraform's aws_ec2_transit_gateway_peering_attachment_accepter must wait for the attachment to reach 'available' state. Added explicit timeouts and a terraform refresh step in the CI pipeline to handle the propagation delay.</span></div></li>
+        </ul>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>Infrastructure as code — zero console drift</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">100%</div><div class="oc-label">Infrastructure managed via Terraform</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Public IPs on EC2 instances</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">SSM</div><div class="oc-label">Bastion-free private access</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">Modular</div><div class="oc-label">3rd region = 1 module call</div></div>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">Terraform</span><span class="tech-pill">AWS Transit Gateway</span><span class="tech-pill">VPC</span><span class="tech-pill">VPC Endpoints</span><span class="tech-pill">AWS SSM</span><span class="tech-pill">IAM</span><span class="tech-pill">ap-south-1</span><span class="tech-pill">ap-south-2</span><span class="tech-pill">NAT Gateway</span><span class="tech-pill">Security Groups</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link active">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>
