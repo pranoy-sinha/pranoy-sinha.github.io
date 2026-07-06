@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: CareJourney Multi-Env Deployment | Pranoy Sinha</title>
+<meta name="description" content="Deploying a Next.js + FastAPI healthcare app across Dev/QA/Production on VPS — solving JWT, Nginx routing, cookie, and Node.js version conflicts."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · Next.js · FastAPI · DevOps</p>
+    <h1 class="cs-title">CareJourney Multi-Environment Deployment</h1>
+    <p class="cs-subtitle">Getting a Next.js frontend and FastAPI backend running cleanly across Dev, QA, and Production on a shared VPS — untangling JWT secrets, Nginx routing conflicts, cookie stripping, and Node.js version hell.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">DevOps & Backend Engineer</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Platform</span><span class="cs-meta-value">Hostinger VPS · Nginx · PM2</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Healthcare SaaS</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">Multi-Env Deployment & DevOps</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>Three environments, one VPS, and nothing talking to each other correctly</h2>
+        <p>CareJourney is a healthcare web application with a Next.js 14 frontend (App Router with server-side rendering) and a FastAPI backend. The client needed Dev, QA, and Production environments running simultaneously on a single Hostinger VPS, with isolated data, separate ports, and independent CI/CD pipelines.</p>
+        <p>The initial deployment attempt had authentication completely broken: users could log in but were immediately redirected back to the login page on every page load. Background API calls returned 401s despite valid credentials being issued.</p>
+        <div class="cs-callout cs-callout-warn">
+            <p><strong>The actual root cause was three independent bugs compounding each other:</strong> mismatched JWT secrets between Next.js Auth and FastAPI, Nginx stripping Set-Cookie headers on proxied responses, and Node.js v22 (installed via nvm) conflicting with the system Node.js v18 used by PM2.</p>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Diagnosis & Fixes</p>
+        <h2>Peeling the onion — three bugs masking each other</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>Node.js version conflict — PM2 running wrong binary</strong><span>PM2 was installed globally under system Node v18, but the Next.js app required v22 features. The fix: install PM2 inside the nvm-managed v22 environment and update the PM2 ecosystem.config.js to explicitly reference the nvm binary path. Added node_args and interpreter fields to lock the runtime.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>JWT secret mismatch between Next-Auth and FastAPI</strong><span>Next-Auth was signing JWTs with a NEXTAUTH_SECRET set in .env.local. FastAPI was reading a different JWT_SECRET from its .env file — both valid secrets, but different. Fixed by unifying to a single shared secret injected via GitHub Actions secrets, and updating both .env files from the CI pipeline on deploy.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>Nginx stripping Set-Cookie on proxied auth responses</strong><span>Next-Auth issues a session cookie via a Set-Cookie header on the /api/auth/callback route. Nginx's proxy_pass was rewriting the response and dropping cookies marked with domain attributes that didn't match the VPS hostname. Fixed with proxy_cookie_domain and proxy_cookie_path directives, plus ensuring the cookie's SameSite=Lax attribute was preserved.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>Routing conflict — /api/auth hijacked by Nginx before Next.js handled it</strong><span>Nginx was forwarding ALL /api/* requests to FastAPI on port 8000. But /api/auth/* belongs to Next-Auth and must be handled by the Next.js process on port 3000. Fixed by adding a specific location block for /api/auth/ that proxies to the Next.js port, placed before the generic /api/ block.</span></div></div>
+        </div>
+        <div class="cs-code">
+<span style="color:#64748b"># Nginx config — routing fix (simplified)</span>
+<span style="color:#93c5fd">server</span> {
+  <span style="color:#86efac">server_name</span> app.carejourney.com;
+
+  <span style="color:#64748b"># Next-Auth routes — handled by Next.js</span>
+  <span style="color:#93c5fd">location</span> /api/auth/ {
+    <span style="color:#86efac">proxy_pass</span>         http://localhost:3000;
+    <span style="color:#86efac">proxy_cookie_domain</span> localhost app.carejourney.com;
+  }
+
+  <span style="color:#64748b"># All other /api/* — FastAPI backend</span>
+  <span style="color:#93c5fd">location</span> /api/ {
+    <span style="color:#86efac">proxy_pass</span> http://localhost:8000;
+  }
+
+  <span style="color:#64748b"># Everything else — Next.js frontend</span>
+  <span style="color:#93c5fd">location</span> / {
+    <span style="color:#86efac">proxy_pass</span> http://localhost:3000;
+  }
+}</div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>Three clean environments, one-command deploys</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">3</div><div class="oc-label">Independent environments on one VPS</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Auth failures post-fix</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">CI/CD</div><div class="oc-label">GitHub Actions auto-deploy per branch</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">SSL</div><div class="oc-label">Let's Encrypt on all 3 subdomains</div></div>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">Next.js 14</span><span class="tech-pill">Next-Auth</span><span class="tech-pill">FastAPI</span><span class="tech-pill">PM2</span><span class="tech-pill">Nginx</span><span class="tech-pill">nvm</span><span class="tech-pill">Node.js v22</span><span class="tech-pill">JWT</span><span class="tech-pill">GitHub Actions</span><span class="tech-pill">Certbot SSL</span><span class="tech-pill">Hostinger VPS</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link active">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>

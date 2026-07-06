@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: IIoT Telemetry Platform | Pranoy Sinha</title>
+<meta name="description" content="Building a production-grade Industrial IoT telemetry stack with PostgreSQL 17 HA, Patroni, Kafka, and PySpark on AWS EC2."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · IoT · AWS · Kafka</p>
+    <h1 class="cs-title">IIoT Telemetry Platform</h1>
+    <p class="cs-subtitle">Designing a fault-tolerant Industrial IoT data pipeline — from raw sensor MQTT events to hourly analytics — with a self-healing PostgreSQL HA cluster at its core.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Cloud & Data Architect</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Platform</span><span class="cs-meta-value">AWS EC2 · ap-south-1</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Industrial IoT / Manufacturing</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">POC → Production Pipeline</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Problem</p>
+        <h2>Sensor data arriving faster than a single database could handle — with zero tolerance for data loss</h2>
+        <p>Industrial sensors (DEMOHW0-1 and DEMOHW0-2) emit telemetry every few seconds — temperature, pressure, vibration, operational state. The existing setup wrote directly to a single PostgreSQL instance with no replication, no buffering, and no failover. Any database restart meant lost telemetry during the window.</p>
+        <p>The business needed a platform that could <strong>ingest high-frequency sensor data reliably</strong>, survive database failures without data loss, and surface hourly aggregations for maintenance and operations dashboards.</p>
+        <div class="cs-callout">
+            <p><strong>Core Requirement:</strong> Zero data loss during planned or unplanned database downtime. Automated failover under 30 seconds. Hourly IoT aggregations delivered to the analytics layer on schedule.</p>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Architecture</p>
+        <h2>Three-tier pipeline: ingest → buffer → store → analyse</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>MQTT Broker (Mosquitto)</strong><span>Sensors publish telemetry to a local Mosquitto broker over MQTT. Python subscribers consume events and forward to Kafka. Keeps sensor firmware simple — no Kafka client needed on device.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Apache Kafka (Docker on EC2)</strong><span>Kafka acts as the durable buffer between ingestion and storage. Even if the downstream database is unavailable, events are retained in Kafka partitions and consumed once the DB recovers. Topic: iot-telemetry, 3 partitions, 7-day retention.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>PostgreSQL 17 HA Cluster (Patroni + etcd + HAProxy)</strong><span>Three-node PostgreSQL cluster: 1 primary + 2 replicas. Patroni manages leader election via etcd. HAProxy routes writes to the current primary and reads to replicas. Automatic failover in under 30 seconds.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>pgBackRest S3 Backups with Glacier Tiering</strong><span>Continuous WAL archiving to S3. Daily full backups with 30-day retention in S3 Standard, automatically tiered to Glacier after 7 days. Recovery point objective (RPO) under 5 minutes.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Apache Airflow + PySpark Analytics</strong><span>Airflow DAG runs hourly, triggering a PySpark job that reads raw telemetry from TimescaleDB hypertables, computes aggregations (min/max/avg per sensor per hour), and writes to the analytics schema consumed by dashboards.</span></div></div>
+        </div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Challenges</p>
+        <h2>What nearly derailed the project</h2>
+        <ul class="cs-challenges">
+            <li><div class="ch-icon">⚡</div><div class="ch-body"><strong>Split-brain risk during network partition</strong><span>Without careful etcd quorum configuration, a network blip between EC2 instances could cause both nodes to believe they are primary. Resolved by enforcing strict quorum (majority of etcd nodes must agree) and adding a DCS timeout before any failover begins.</span></div></li>
+            <li><div class="ch-icon">💾</div><div class="ch-body"><strong>WAL slot exhaustion during Kafka lag</strong><span>During a Kafka consumer outage, unconsumed WAL slots grew unbounded, threatening to fill the EC2 disk. Fixed by setting max_slot_wal_keep_size and adding a CloudWatch alarm on WAL directory size.</span></div></li>
+            <li><div class="ch-icon">⏱️</div><div class="ch-body"><strong>Airflow DAG timing drift on hourly aggregations</strong><span>PySpark jobs occasionally ran longer than 60 minutes, causing the next DAG run to queue and pile up. Resolved by adding task timeout enforcement, dynamic backfill detection, and a maximum active runs limit of 1.</span></div></li>
+            <li><div class="ch-icon">🌐</div><div class="ch-body"><strong>HAProxy health check false positives</strong><span>HAProxy marked the primary as unhealthy during a long VACUUM operation (high I/O), triggering unnecessary failover. Fixed by tuning the health check endpoint to use pg_is_in_recovery() directly via Patroni's REST API rather than a TCP connection check.</span></div></li>
+        </ul>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>A pipeline that runs without hand-holding</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">&lt;30s</div><div class="oc-label">Automated DB failover time</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Data loss events post-launch</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">7d</div><div class="oc-label">Kafka retention buffer</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">&lt;5min</div><div class="oc-label">Recovery point objective (RPO)</div></div>
+        </div>
+        <div class="cs-callout cs-callout-success">
+            <p><strong>Result:</strong> The platform has processed millions of sensor events across both hardware units with no data loss incidents since go-live. The Patroni cluster has performed two automated failovers (planned maintenance) with zero manual intervention required.</p>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">PostgreSQL 17</span><span class="tech-pill">TimescaleDB</span><span class="tech-pill">Patroni</span><span class="tech-pill">etcd</span><span class="tech-pill">HAProxy</span><span class="tech-pill">Apache Kafka</span><span class="tech-pill">MQTT / Mosquitto</span><span class="tech-pill">pgBackRest</span><span class="tech-pill">Apache Airflow</span><span class="tech-pill">PySpark</span><span class="tech-pill">AWS EC2</span><span class="tech-pill">AWS S3</span><span class="tech-pill">Glacier</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link active">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>

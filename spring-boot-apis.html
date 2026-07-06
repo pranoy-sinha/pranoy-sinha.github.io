@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Case Study: HealthApi & simpleShop REST APIs | Pranoy Sinha</title>
+<meta name="description" content="Building production-grade Spring Boot 3.x REST APIs with Spring Security 6, JWT, JPA/Hibernate, and a generic response wrapper pattern."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="cs-shared.css"/>
+</head><body>
+<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
+
+<div class="cs-hero">
+    <p class="cs-breadcrumb">Case Study · Spring Boot · Java · REST</p>
+    <h1 class="cs-title">HealthApi &amp; simpleShop REST APIs</h1>
+    <p class="cs-subtitle">Two production-grade Spring Boot 3.x APIs demonstrating enterprise patterns: JWT auth, generic response wrappers, global exception handling, and Jackson serialisation control — the kind of code that survives a code review.</p>
+    <div class="cs-meta">
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Backend Engineer</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Framework</span><span class="cs-meta-value">Spring Boot 3.x · Java 17</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Domain</span><span class="cs-meta-value">Healthcare & E-Commerce</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">Backend API Development</span></div>
+    </div>
+</div>
+
+<div class="cs-body">
+<main>
+    <div class="cs-section reveal">
+        <p class="cs-section-label">The Goal</p>
+        <h2>Reference implementations of enterprise Spring Boot patterns</h2>
+        <p><strong>HealthApi</strong> is a healthcare records API (patients, appointments, physicians, prescriptions) built to demonstrate full CRUD, JWT-secured endpoints, paginated list responses, file upload/delete, and a global exception handler that returns consistent error shapes regardless of where the exception occurs.</p>
+        <p><strong>simpleShop</strong> extends these patterns into an e-commerce context (products, orders, customers, inventory) with a focus on a generic <code>ReturnSet&lt;T&gt;</code> response wrapper that works across any entity type — and Jackson configuration that suppresses null fields cleanly.</p>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Key Patterns</p>
+        <h2>The engineering decisions that matter</h2>
+        <div class="cs-steps">
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>Generic ReturnSet&lt;T&gt; response wrapper</strong><span>Every endpoint returns ReturnSet&lt;T&gt; — a typed wrapper with status, message, data (the payload), and pagination metadata. This gives API consumers a consistent contract regardless of which entity they're working with.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Spring Security 6 + JWT — stateless auth</strong><span>JWT filter chain validates tokens on every request. No session state. Refresh token rotation with a 15-minute access token and 7-day refresh token. Role-based access control via @PreAuthorize annotations on controller methods.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>GlobalExceptionHandler with @ControllerAdvice</strong><span>Catches ValidationException, EntityNotFoundException, AccessDeniedException, and generic RuntimeException — returning structured error responses with HTTP status, error code, and human-readable message. No stack traces leak to the client.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>@JsonInclude(NON_NULL) on all DTOs</strong><span>Jackson configured to suppress null fields globally. No more empty "address": null fields polluting API responses. Optional fields simply absent from the JSON when not populated.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Lombok + JPA — clean entity definitions</strong><span>@Data, @Builder, @NoArgsConstructor on all entities. JPA relationships mapped with fetch strategies tuned to avoid N+1 queries. @EntityGraph used on complex joins instead of LAZY fetch with explicit join fetch in JPQL.</span></div></div>
+        </div>
+        <div class="cs-code">
+<span style="color:#64748b">// Generic response wrapper</span>
+<span style="color:#93c5fd">@Data</span> <span style="color:#93c5fd">@Builder</span>
+<span style="color:#93c5fd">@JsonInclude</span>(JsonInclude.Include.<span style="color:#86efac">NON_NULL</span>)
+<span style="color:#93c5fd">public class</span> <span style="color:#fbbf24">ReturnSet</span>&lt;T&gt; {
+    <span style="color:#93c5fd">private</span> <span style="color:#86efac">String</span>  status;
+    <span style="color:#93c5fd">private</span> <span style="color:#86efac">String</span>  message;
+    <span style="color:#93c5fd">private</span> T       data;
+    <span style="color:#93c5fd">private</span> <span style="color:#86efac">Integer</span> totalRecords;
+    <span style="color:#93c5fd">private</span> <span style="color:#86efac">Integer</span> page;
+    <span style="color:#93c5fd">private</span> <span style="color:#86efac">Integer</span> pageSize;
+}</div>
+    </div>
+
+    <div class="cs-section reveal">
+        <p class="cs-section-label">Outcomes</p>
+        <h2>APIs ready to integrate — not just demonstrate</h2>
+        <div class="cs-outcomes">
+            <div class="cs-outcome-card"><div class="oc-num">100%</div><div class="oc-label">Consistent response shape across all endpoints</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Stack traces exposed to API consumers</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">JWT</div><div class="oc-label">Stateless auth with refresh rotation</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">RBAC</div><div class="oc-label">Role-based endpoint access control</div></div>
+        </div>
+        <div class="cs-callout cs-callout-success">
+            <p><strong>Reusability:</strong> The ReturnSet wrapper, GlobalExceptionHandler, and JWT filter chain from HealthApi were extracted as a shared library and reused directly in simpleShop — demonstrating the value of designing for reuse from the start.</p>
+        </div>
+    </div>
+    <hr class="cs-divider"/>
+    <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
+</main>
+<aside class="cs-sidebar">
+    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">Spring Boot 3.x</span><span class="tech-pill">Spring Security 6</span><span class="tech-pill">Java 17</span><span class="tech-pill">JWT</span><span class="tech-pill">JPA/Hibernate</span><span class="tech-pill">Lombok</span><span class="tech-pill">Jackson</span><span class="tech-pill">MySQL</span><span class="tech-pill">Maven</span></div></div>
+    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link active">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
+</aside>
+</div>
+<div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
+<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+</body></html>
