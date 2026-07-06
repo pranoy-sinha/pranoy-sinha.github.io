@@ -1,34 +1,47 @@
-<!doctype html><html lang="en"><head>
+<!doctype html><html lang="en">
+<head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Case Study: IIoT Telemetry Platform | Pranoy Sinha</title>
 <meta name="description" content="Building a production-grade Industrial IoT telemetry stack with PostgreSQL 17 HA, Patroni, Kafka, and PySpark on AWS EC2."/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root { --ink: #0d1117; --ink-soft: #3a3f4b; --ink-muted: #6b7280; --surface: #f7f8fa; --white: #ffffff; --accent: #1a56db; --accent-glow: #3b82f6; --accent-light: #eff6ff; --border: #e5e7eb; --mono: "JetBrains Mono", monospace; }
 html { scroll-behavior: smooth; }
 body { font-family: "Space Grotesk", sans-serif; background: var(--surface); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(247,248,250,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(1.5rem, 5vw, 4rem); height: 60px; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(247,248,250,0.95); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(1.5rem,5vw,4rem); height: 60px; }
 .nav-logo { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; text-decoration: none; }
-.nav-back { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--ink-soft); font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+.nav-back { display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none; color: var(--ink-soft); font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+.nav-back svg { transition: transform 0.2s; }
 .nav-back:hover { color: var(--accent); }
 .nav-back:hover svg { transform: translateX(-3px); }
-.nav-back svg { transition: transform 0.2s; }
-.cs-hero { padding: calc(60px + 4rem) clamp(1.5rem, 8vw, 7rem) 3rem; background: var(--white); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
-.cs-hero::before { content: ""; position: absolute; top: -30%; right: -5%; width: 40vw; height: 40vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%); pointer-events: none; }
+.nav-dropdown { position: relative; }
+.nav-dropdown-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: 1.5px solid var(--border); border-radius: 6px; padding: 0.4rem 0.85rem; font-size: 0.83rem; font-weight: 600; color: var(--ink-soft); cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap; }
+.nav-dropdown-btn:hover, .nav-dropdown-btn.open { border-color: var(--accent); color: var(--accent); }
+.nav-dropdown-btn svg { transition: transform 0.25s; }
+.nav-dropdown-btn.open svg { transform: rotate(180deg); }
+.nav-dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--white); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); min-width: 240px; overflow: hidden; opacity: 0; transform: translateY(-6px) scale(0.98); pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease; }
+.nav-dropdown-menu.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.nav-dropdown-menu a { display: flex; align-items: center; gap: 0.65rem; padding: 0.65rem 1rem; text-decoration: none; font-size: 0.825rem; color: var(--ink-soft); transition: background 0.15s, color 0.15s; border-bottom: 1px solid var(--border); }
+.nav-dropdown-menu a:last-child { border-bottom: none; }
+.nav-dropdown-menu a:hover { background: var(--accent-light); color: var(--accent); }
+.nav-dropdown-menu a.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.cs-hero { padding: calc(60px + 4rem) clamp(1.5rem,8vw,7rem) 3rem; background: var(--white); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.cs-hero::before { content: ""; position: absolute; top: -30%; right: -5%; width: 40vw; height: 40vw; border-radius: 50%; background: radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 70%); pointer-events: none; }
 .cs-breadcrumb { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
-.cs-title { font-family: "Fraunces", serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 600; line-height: 1.1; color: var(--ink); margin-bottom: 1.25rem; max-width: 820px; }
+.cs-title { font-family: "Fraunces", serif; font-size: clamp(1.8rem,4vw,3.2rem); font-weight: 600; line-height: 1.1; color: var(--ink); margin-bottom: 1.25rem; max-width: 820px; }
 .cs-subtitle { font-size: 1.05rem; color: var(--ink-soft); max-width: 700px; line-height: 1.75; margin-bottom: 2rem; }
 .cs-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; }
 .cs-meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
 .cs-meta-label { font-family: var(--mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
 .cs-meta-value { font-size: 0.875rem; font-weight: 600; color: var(--ink); }
-.cs-body { display: grid; grid-template-columns: 1fr 300px; gap: 3rem; padding: 3.5rem clamp(1.5rem, 8vw, 7rem); max-width: 1300px; margin: 0 auto; }
-@media (max-width: 900px) { .cs-body { grid-template-columns: 1fr; } .cs-sidebar { order: -1; } }
+.cs-content { max-width: 860px; margin: 0 auto; padding: 3.5rem clamp(1.5rem,8vw,7rem); }
 .cs-section { margin-bottom: 3rem; }
 .cs-section-label { font-family: var(--mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
-.cs-section h2 { font-family: "Fraunces", serif; font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 600; color: var(--ink); margin-bottom: 1rem; line-height: 1.2; }
+.cs-section h2 { font-family: "Fraunces", serif; font-size: clamp(1.3rem,2.5vw,1.75rem); font-weight: 600; color: var(--ink); margin-bottom: 1rem; line-height: 1.2; }
 .cs-section p { color: var(--ink-soft); line-height: 1.8; margin-bottom: 1rem; font-size: 0.975rem; }
 .cs-section p strong { color: var(--ink); }
 .cs-section p:last-child { margin-bottom: 0; }
@@ -44,7 +57,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba
 .ch-icon { width: 28px; height: 28px; min-width: 28px; border-radius: 6px; background: #fff3cd; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
 .ch-body strong { display: block; font-size: 0.875rem; color: var(--ink); margin-bottom: 0.2rem; }
 .ch-body span { font-size: 0.825rem; color: var(--ink-soft); line-height: 1.55; }
-.cs-outcomes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+.cs-outcomes { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 1rem; margin: 1.25rem 0; }
 .cs-outcome-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; text-align: center; }
 .oc-num { font-family: "Fraunces", serif; font-size: 2rem; font-weight: 600; color: var(--accent); line-height: 1; }
 .oc-label { font-size: 0.75rem; color: var(--ink-muted); margin-top: 0.4rem; font-weight: 500; line-height: 1.3; }
@@ -55,28 +68,42 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba
 .cs-step-body { padding-bottom: 1.75rem; }
 .cs-step-body strong { display: block; font-size: 0.9rem; color: var(--ink); margin-bottom: 0.3rem; }
 .cs-step-body span { font-size: 0.845rem; color: var(--ink-soft); line-height: 1.6; }
-.cs-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-.cs-sidebar-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.4rem; }
-.cs-sidebar-card h4 { font-family: var(--mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-.tech-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-.tech-pill { padding: 0.2rem 0.65rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; font-size: 0.72rem; font-family: var(--mono); font-weight: 500; color: var(--ink-muted); }
-.cs-nav-links { display: flex; flex-direction: column; gap: 0.5rem; }
-.cs-nav-link { text-decoration: none; font-size: 0.825rem; color: var(--ink-soft); padding: 0.5rem 0.75rem; border-radius: 6px; transition: all 0.15s; display: flex; align-items: center; gap: 0.5rem; }
-.cs-nav-link:hover { background: var(--accent-light); color: var(--accent); }
-.cs-nav-link.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
 .cs-code { background: var(--ink); color: #e2e8f0; border-radius: 8px; padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; line-height: 1.7; overflow-x: auto; margin: 1.25rem 0; }
+hr.cs-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 .back-btn { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.5rem; background: var(--accent); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.875rem; transition: all 0.2s; }
 .back-btn:hover { background: #1648c0; transform: translateY(-1px); }
 .cs-footer { background: var(--ink); color: #6b7280; text-align: center; padding: 2rem; font-size: 0.8rem; font-family: var(--mono); margin-top: 2rem; }
 .cs-footer a { color: #60a5fa; text-decoration: none; }
-hr.cs-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
 .reveal.visible { opacity: 1; transform: none; }
-
 </style>
-</head><body>
-<nav><a href="../index.html" class="nav-logo">pranoy.sinha</a><a href="../index.html#projects" class="nav-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Portfolio</a></nav>
-
+</head>
+<body>
+<nav>
+        <a href="../index.html" class="nav-logo">pranoy.sinha</a>
+        <div class="nav-right">
+            <a href="../index.html#projects" class="nav-back">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Portfolio
+            </a>
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-btn" id="ddBtn" onclick="toggleDD()">
+                    Case Studies
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="nav-dropdown-menu" id="ddMenu">
+            <a href="transpoc-ai-data-explorer.html"><span>🤖</span>AI Data Explorer</a>
+            <a href="iiot-telemetry-platform.html" class="active"><span>📡</span>IIoT Telemetry Platform</a>
+            <a href="retailbot-poc.html"><span>🛒</span>RetailBot POC</a>
+            <a href="carejourney-deployment.html"><span>🏥</span>CareJourney Deployment</a>
+            <a href="iot-docker-ec2.html"><span>🐳</span>IoT Docker on EC2</a>
+            <a href="spring-boot-apis.html"><span>☕</span>Spring Boot APIs</a>
+            <a href="aws-transit-gateway.html"><span>🌐</span>AWS Transit Gateway</a>
+            <a href="postgres-migration.html"><span>🐘</span>PostgreSQL Migration</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 <div class="cs-hero">
     <p class="cs-breadcrumb">Case Study · IoT · AWS · Kafka</p>
     <h1 class="cs-title">IIoT Telemetry Platform</h1>
@@ -88,42 +115,34 @@ hr.cs-divider { border: none; border-top: 1px solid var(--border); margin: 2.5re
         <div class="cs-meta-item"><span class="cs-meta-label">Type</span><span class="cs-meta-value">POC → Production Pipeline</span></div>
     </div>
 </div>
-
-<div class="cs-body">
-<main>
+<div class="cs-content">
     <div class="cs-section reveal">
         <p class="cs-section-label">The Problem</p>
         <h2>Sensor data arriving faster than a single database could handle — with zero tolerance for data loss</h2>
-        <p>Industrial sensors (DEMOHW0-1 and DEMOHW0-2) emit telemetry every few seconds — temperature, pressure, vibration, operational state. The existing setup wrote directly to a single PostgreSQL instance with no replication, no buffering, and no failover. Any database restart meant lost telemetry during the window.</p>
-        <p>The business needed a platform that could <strong>ingest high-frequency sensor data reliably</strong>, survive database failures without data loss, and surface hourly aggregations for maintenance and operations dashboards.</p>
-        <div class="cs-callout">
-            <p><strong>Core Requirement:</strong> Zero data loss during planned or unplanned database downtime. Automated failover under 30 seconds. Hourly IoT aggregations delivered to the analytics layer on schedule.</p>
-        </div>
+        <p>Industrial sensors emit telemetry every few seconds. The existing setup wrote directly to a single PostgreSQL instance with no replication, no buffering, and no failover. Any database restart meant lost telemetry during the window.</p>
+        <div class="cs-callout"><p><strong>Core Requirement:</strong> Zero data loss during planned or unplanned database downtime. Automated failover under 30 seconds. Hourly IoT aggregations delivered to the analytics layer on schedule.</p></div>
     </div>
-
     <div class="cs-section reveal">
         <p class="cs-section-label">Architecture</p>
         <h2>Three-tier pipeline: ingest → buffer → store → analyse</h2>
         <div class="cs-steps">
-            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>MQTT Broker (Mosquitto)</strong><span>Sensors publish telemetry to a local Mosquitto broker over MQTT. Python subscribers consume events and forward to Kafka. Keeps sensor firmware simple — no Kafka client needed on device.</span></div></div>
-            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Apache Kafka (Docker on EC2)</strong><span>Kafka acts as the durable buffer between ingestion and storage. Even if the downstream database is unavailable, events are retained in Kafka partitions and consumed once the DB recovers. Topic: iot-telemetry, 3 partitions, 7-day retention.</span></div></div>
-            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>PostgreSQL 17 HA Cluster (Patroni + etcd + HAProxy)</strong><span>Three-node PostgreSQL cluster: 1 primary + 2 replicas. Patroni manages leader election via etcd. HAProxy routes writes to the current primary and reads to replicas. Automatic failover in under 30 seconds.</span></div></div>
-            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>pgBackRest S3 Backups with Glacier Tiering</strong><span>Continuous WAL archiving to S3. Daily full backups with 30-day retention in S3 Standard, automatically tiered to Glacier after 7 days. Recovery point objective (RPO) under 5 minutes.</span></div></div>
-            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Apache Airflow + PySpark Analytics</strong><span>Airflow DAG runs hourly, triggering a PySpark job that reads raw telemetry from TimescaleDB hypertables, computes aggregations (min/max/avg per sensor per hour), and writes to the analytics schema consumed by dashboards.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">1</div><div class="cs-step-body"><strong>MQTT Broker (Mosquitto)</strong><span>Sensors publish telemetry to Mosquitto. Python subscribers consume events and forward to Kafka — keeping sensor firmware simple with no Kafka client on device.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">2</div><div class="cs-step-body"><strong>Apache Kafka (Docker on EC2)</strong><span>Kafka acts as a durable buffer. Events are retained in partitions even if the downstream DB is unavailable, and consumed once it recovers. Topic: iot-telemetry, 3 partitions, 7-day retention.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">3</div><div class="cs-step-body"><strong>PostgreSQL 17 HA Cluster (Patroni + etcd + HAProxy)</strong><span>Three-node cluster: 1 primary + 2 replicas. Patroni manages leader election via etcd. HAProxy routes writes to primary and reads to replicas. Automatic failover under 30 seconds.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">4</div><div class="cs-step-body"><strong>pgBackRest S3 Backups with Glacier Tiering</strong><span>Continuous WAL archiving to S3. Daily full backups with 30-day retention tiered to Glacier after 7 days. RPO under 5 minutes.</span></div></div>
+            <div class="cs-step"><div class="cs-step-num">5</div><div class="cs-step-body"><strong>Apache Airflow + PySpark Analytics</strong><span>Hourly DAG triggers a PySpark job computing min/max/avg aggregations per sensor per hour, written to the analytics schema for dashboards.</span></div></div>
         </div>
     </div>
-
     <div class="cs-section reveal">
         <p class="cs-section-label">Key Challenges</p>
         <h2>What nearly derailed the project</h2>
         <ul class="cs-challenges">
-            <li><div class="ch-icon">⚡</div><div class="ch-body"><strong>Split-brain risk during network partition</strong><span>Without careful etcd quorum configuration, a network blip between EC2 instances could cause both nodes to believe they are primary. Resolved by enforcing strict quorum (majority of etcd nodes must agree) and adding a DCS timeout before any failover begins.</span></div></li>
-            <li><div class="ch-icon">💾</div><div class="ch-body"><strong>WAL slot exhaustion during Kafka lag</strong><span>During a Kafka consumer outage, unconsumed WAL slots grew unbounded, threatening to fill the EC2 disk. Fixed by setting max_slot_wal_keep_size and adding a CloudWatch alarm on WAL directory size.</span></div></li>
-            <li><div class="ch-icon">⏱️</div><div class="ch-body"><strong>Airflow DAG timing drift on hourly aggregations</strong><span>PySpark jobs occasionally ran longer than 60 minutes, causing the next DAG run to queue and pile up. Resolved by adding task timeout enforcement, dynamic backfill detection, and a maximum active runs limit of 1.</span></div></li>
-            <li><div class="ch-icon">🌐</div><div class="ch-body"><strong>HAProxy health check false positives</strong><span>HAProxy marked the primary as unhealthy during a long VACUUM operation (high I/O), triggering unnecessary failover. Fixed by tuning the health check endpoint to use pg_is_in_recovery() directly via Patroni's REST API rather than a TCP connection check.</span></div></li>
+            <li><div class="ch-icon">⚡</div><div class="ch-body"><strong>Split-brain risk during network partition</strong><span>Without strict etcd quorum configuration, a network blip could cause both nodes to claim primary. Fixed by enforcing majority quorum and adding DCS timeout before any failover begins.</span></div></li>
+            <li><div class="ch-icon">💾</div><div class="ch-body"><strong>WAL slot exhaustion filling EC2 disk</strong><span>During a Kafka consumer outage, unconsumed WAL slots grew 18GB in 4 hours. Fixed with max_slot_wal_keep_size and CloudWatch alarm on WAL directory size.</span></div></li>
+            <li><div class="ch-icon">⏱️</div><div class="ch-body"><strong>Airflow DAG timing drift</strong><span>PySpark jobs occasionally exceeded 60 minutes causing queue pile-up. Resolved with task timeout enforcement and maximum active runs limit of 1.</span></div></li>
+            <li><div class="ch-icon">🌐</div><div class="ch-body"><strong>HAProxy false-positive health checks</strong><span>HAProxy marked the primary unhealthy during a long VACUUM, triggering unnecessary failover. Fixed by using Patroni's REST API health endpoint instead of TCP connection check.</span></div></li>
         </ul>
     </div>
-
     <div class="cs-section reveal">
         <p class="cs-section-label">Outcomes</p>
         <h2>A pipeline that runs without hand-holding</h2>
@@ -131,20 +150,19 @@ hr.cs-divider { border: none; border-top: 1px solid var(--border); margin: 2.5re
             <div class="cs-outcome-card"><div class="oc-num">&lt;30s</div><div class="oc-label">Automated DB failover time</div></div>
             <div class="cs-outcome-card"><div class="oc-num">0</div><div class="oc-label">Data loss events post-launch</div></div>
             <div class="cs-outcome-card"><div class="oc-num">7d</div><div class="oc-label">Kafka retention buffer</div></div>
-            <div class="cs-outcome-card"><div class="oc-num">&lt;5min</div><div class="oc-label">Recovery point objective (RPO)</div></div>
+            <div class="cs-outcome-card"><div class="oc-num">&lt;5min</div><div class="oc-label">Recovery point objective</div></div>
         </div>
-        <div class="cs-callout cs-callout-success">
-            <p><strong>Result:</strong> The platform has processed millions of sensor events across both hardware units with no data loss incidents since go-live. The Patroni cluster has performed two automated failovers (planned maintenance) with zero manual intervention required.</p>
-        </div>
+        <div class="cs-callout cs-callout-success"><p><strong>Result:</strong> Millions of sensor events processed with no data loss incidents. Two automated failovers completed (planned maintenance) with zero manual intervention.</p></div>
     </div>
     <hr class="cs-divider"/>
     <a href="../index.html#projects" class="back-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to all projects</a>
-</main>
-<aside class="cs-sidebar">
-    <div class="cs-sidebar-card"><h4>Tech Stack</h4><div class="tech-list"><span class="tech-pill">PostgreSQL 17</span><span class="tech-pill">TimescaleDB</span><span class="tech-pill">Patroni</span><span class="tech-pill">etcd</span><span class="tech-pill">HAProxy</span><span class="tech-pill">Apache Kafka</span><span class="tech-pill">MQTT / Mosquitto</span><span class="tech-pill">pgBackRest</span><span class="tech-pill">Apache Airflow</span><span class="tech-pill">PySpark</span><span class="tech-pill">AWS EC2</span><span class="tech-pill">AWS S3</span><span class="tech-pill">Glacier</span></div></div>
-    <div class="cs-sidebar-card"><h4>All Case Studies</h4><nav class="cs-nav-links"><a href="transpoc-ai-data-explorer.html" class="cs-nav-link">🤖 AI Data Explorer</a><a href="iiot-telemetry-platform.html" class="cs-nav-link active">📡 IIoT Telemetry Platform</a><a href="retailbot-poc.html" class="cs-nav-link">🛒 RetailBot POC</a><a href="carejourney-deployment.html" class="cs-nav-link">🏥 CareJourney Deployment</a><a href="iot-docker-ec2.html" class="cs-nav-link">🐳 IoT Docker on EC2</a><a href="spring-boot-apis.html" class="cs-nav-link">☕ Spring Boot APIs</a><a href="aws-transit-gateway.html" class="cs-nav-link">🌐 AWS Transit Gateway</a><a href="postgres-migration.html" class="cs-nav-link">🐘 PostgreSQL Migration</a></nav></div>
-</aside>
 </div>
 <div class="cs-footer"><p>© 2025 Pranoy Sinha · Cloud &amp; AI Solutions Architect · <a href="https://pranoy-sinha.github.io">pranoy-sinha.github.io</a></p></div>
-<script>const reveals=document.querySelectorAll(".reveal");const obs=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");});},{threshold:0.1});reveals.forEach(el=>obs.observe(el));</script>
+<script>
+    function toggleDD(){const b=document.getElementById('ddBtn'),m=document.getElementById('ddMenu');b.classList.toggle('open');m.classList.toggle('open');}
+    document.addEventListener('click',function(e){if(!e.target.closest('.nav-dropdown')){document.getElementById('ddBtn').classList.remove('open');document.getElementById('ddMenu').classList.remove('open');}});
+    const reveals=document.querySelectorAll('.reveal');
+    const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1});
+    reveals.forEach(el=>obs.observe(el));
+</script>
 </body></html>
