@@ -233,7 +233,7 @@
         font-size: clamp(1rem, 2vw, 1.35rem);
         font-weight: 400;
         color: var(--ink-soft);
-        max-width: 680px;
+        max-width: none;
         margin-bottom: 2.5rem;
         line-height: 1.7;
       }
@@ -243,10 +243,114 @@
         font-weight: 600;
       }
 
+      .hero-split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 3.5rem;
+        align-items: center;
+      }
+
+      .hero-aside {
+        min-width: 0;
+      }
+
+      .how-work {
+        margin-top: 0;
+      }
+
+      .how-work-eyebrow {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.75rem;
+      }
+
+      .how-work-eyebrow::before {
+        content: "— ";
+      }
+
+      .how-work-head {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 0.75rem;
+      }
+
+      .how-work-head span {
+        color: var(--ink-muted);
+      }
+
+      .how-work-lead {
+        font-size: 1rem;
+        color: var(--ink-soft);
+        line-height: 1.7;
+        margin-bottom: 0.5rem;
+      }
+
+      .how-work-note {
+        font-size: 0.875rem;
+        color: var(--ink-muted);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .term {
+        background: #0d1528;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(13, 17, 23, 0.12);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: #e5ecf7;
+      }
+
+      .term-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0.6rem 0.9rem;
+        background: #111c36;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .term-bar i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .term-bar i:nth-child(1) { background: #ff5f57; }
+      .term-bar i:nth-child(2) { background: #febc2e; }
+      .term-bar i:nth-child(3) { background: #28c840; }
+
+      .term-title {
+        margin-left: 8px;
+        color: #7c8aa5;
+        font-size: 0.72rem;
+      }
+
+      .term-body {
+        padding: 0.9rem 1.1rem 1rem;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      .term-prompt { color: #e5ecf7; }
+      .term-out { color: #8b9bb8; }
+      .term-warn { color: #facc15; }
+      .term-ok { color: #4ade80; }
+
       .hero-stats {
         display: flex;
         flex-wrap: wrap;
-        gap: 2rem;
+        gap: 1.5rem 1.25rem;
         margin-bottom: 3rem;
       }
 
@@ -1033,6 +1137,11 @@
           gap: 1.5rem;
         }
 
+        .hero-split {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+
         .stack-cols {
           grid-template-columns: 1fr 1fr;
         }
@@ -1073,6 +1182,8 @@
     </nav>
 
     <section class="hero">
+      <div class="hero-split">
+      <div class="hero-main">
       <p class="hero-eyebrow">
         Cloud &amp; AI Solutions Architect · Kolkata, India
       </p>
@@ -1101,10 +1212,6 @@
         <div class="stat">
           <span class="stat-number">3</span
           ><span class="stat-label">Cloud Platforms</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number">∞</span
-          ><span class="stat-label">Commits to Production</span>
         </div>
       </div>
       <div class="hero-cta">
@@ -1166,6 +1273,34 @@
               /></svg
           ></a>
         </div>
+      </div>
+      </div>
+      <div class="hero-aside">
+      <div class="how-work">
+        <p class="how-work-eyebrow">How I actually work</p>
+        <h2 class="how-work-head">
+          No chit-chat. <span>No empty talk.</span> No fuss.
+        </h2>
+        <p class="how-work-lead">
+          Only real work: fixing, troubleshooting and debugging, hands on the
+          keyboard in front of my system.
+        </p>
+        <p class="how-work-note">
+          You get clear written updates and working fixes, not meetings about
+          meetings.
+        </p>
+        <div class="term" role="img" aria-label="Terminal session on prod-db-01 showing a replica lag check, a checkpoint fix, and a deploy">
+          <div class="term-bar"><i></i><i></i><i></i><span class="term-title">prod-db-01</span></div>
+          <div class="term-body"><span class="term-prompt">$ patronictl list</span>
+<span class="term-out">  replica-2  streaming  lag 4.2 GB <span class="term-warn">⚠</span></span>
+<span class="term-prompt">$ grep checkpoint postgresql.log | tail</span>
+<span class="term-out">  # found it: checkpoint storm on burst writes</span>
+<span class="term-prompt">$ git commit -m "fix: tune checkpoint + WAL settings"</span>
+<span class="term-ok">✓ lag 0 B · deployed · runbook updated</span>
+<span class="term-prompt">$</span></div>
+        </div>
+      </div>
+      </div>
       </div>
       <div class="scroll-indicator">
         <span>scroll</span
