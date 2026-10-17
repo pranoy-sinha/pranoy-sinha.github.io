@@ -512,6 +512,72 @@
         margin-bottom: 3rem;
       }
 
+      /* ── TECH MARQUEE (beside expertise heading) ── */
+      .expertise-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 3rem;
+        align-items: center;
+        margin-bottom: 3rem;
+      }
+
+      .expertise-intro .section-sub {
+        margin-bottom: 0;
+      }
+
+      .tech-marquee {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        min-width: 0;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      }
+
+      .tech-row {
+        overflow: hidden;
+      }
+
+      .tech-track {
+        display: flex;
+        gap: 0.75rem;
+        width: max-content;
+        animation: techScroll 38s linear infinite;
+      }
+
+      .tech-row-right .tech-track {
+        animation-direction: reverse;
+        animation-duration: 44s;
+      }
+
+      .tech-marquee:hover .tech-track {
+        animation-play-state: paused;
+      }
+
+      .tech-chip {
+        flex: none;
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.55rem 0.9rem;
+        white-space: nowrap;
+        box-shadow: 0 1px 2px rgba(13, 17, 23, 0.04);
+      }
+
+      @keyframes techScroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(calc(-50% - 0.375rem)); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .tech-track { animation: none; }
+      }
+
       /* ── CORE EXPERTISE ── */
       #expertise {
         background: var(--accent-light);
@@ -1142,6 +1208,11 @@
           gap: 2.5rem;
         }
 
+        .expertise-top {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
         .stack-cols {
           grid-template-columns: 1fr 1fr;
         }
@@ -1317,12 +1388,66 @@
     </section>
 
     <section id="expertise">
-      <p class="section-label reveal">Core Expertise · Last 7+ Years</p>
-      <h2 class="section-title reveal">What I can build for you.</h2>
-      <p class="section-sub reveal">
-        The areas I've worked in hands-on since moving into cloud, IoT and AI.
-        Each one is backed by systems running in production.
-      </p>
+      <div class="expertise-top">
+        <div class="expertise-intro">
+          <p class="section-label reveal">Core Expertise · Last 7+ Years</p>
+          <h2 class="section-title reveal">What I can build for you.</h2>
+          <p class="section-sub reveal">
+            The areas I've worked in hands-on since moving into cloud, IoT and AI.
+            Each one is backed by systems running in production.
+          </p>
+        </div>
+        <div class="tech-marquee reveal" aria-label="Technologies and specialties">
+          <div class="tech-row tech-row-left">
+            <div class="tech-track">
+              <span class="tech-chip">&lt;Cloud &amp; Multi-Cloud Architect /&gt;</span>
+              <span class="tech-chip">&lt;PostgreSQL DR &amp; HA Specialist /&gt;</span>
+              <span class="tech-chip">&lt;AWS /&gt;</span>
+              <span class="tech-chip">&lt;OCI /&gt;</span>
+              <span class="tech-chip">&lt;Azure /&gt;</span>
+              <span class="tech-chip">&lt;Terraform /&gt;</span>
+              <span class="tech-chip">&lt;Kubernetes /&gt;</span>
+              <span class="tech-chip">&lt;Docker /&gt;</span>
+              <span class="tech-chip">&lt;Industrial IoT /&gt;</span>
+              <span class="tech-chip">&lt;GenAI &amp; LLM Integration /&gt;</span>
+              <span class="tech-chip">&lt;FastAPI /&gt;</span>
+              <span class="tech-chip">&lt;React /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Cloud &amp; Multi-Cloud Architect /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;PostgreSQL DR &amp; HA Specialist /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;AWS /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;OCI /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Azure /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Terraform /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Kubernetes /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Docker /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Industrial IoT /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;GenAI &amp; LLM Integration /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;FastAPI /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;React /&gt;</span>
+            </div>
+          </div>
+          <div class="tech-row tech-row-right">
+            <div class="tech-track">
+              <span class="tech-chip">&lt;Spring Boot /&gt;</span>
+              <span class="tech-chip">&lt;MCP Servers /&gt;</span>
+              <span class="tech-chip">&lt;Oracle 23ai /&gt;</span>
+              <span class="tech-chip">&lt;Oracle 26ai /&gt;</span>
+              <span class="tech-chip">&lt;Linux &amp; Nginx /&gt;</span>
+              <span class="tech-chip">&lt;CI/CD Pipelines /&gt;</span>
+              <span class="tech-chip">&lt;Full-Stack Engineer /&gt;</span>
+              <span class="tech-chip">&lt;Data Pipelines /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Spring Boot /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;MCP Servers /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Oracle 23ai /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Oracle 26ai /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Linux &amp; Nginx /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;CI/CD Pipelines /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Full-Stack Engineer /&gt;</span>
+              <span class="tech-chip" aria-hidden="true">&lt;Data Pipelines /&gt;</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="expertise-grid">
         <div class="xp-card reveal">
           <div class="xp-head">
